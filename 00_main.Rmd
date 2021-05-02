@@ -1,0 +1,64 @@
+---
+title: "Applicances of recurrent neural networks (RNN) in time series analysis"
+subtitle: "OEKO3 Final Project"
+author: Pascal Buehler, Ken Geeler, Philipp Rieser
+date: "Spring semester 2021"
+output: 
+  pdf_document:
+    toc:  yes
+    df_print: paged
+bibliography: add/doc.bib
+csl:  add/ieee.csl
+header-includes:
+- \usepackage{pdfpages}
+- \usepackage{amsmath}
+- \usepackage{placeins} # to keep figures and text in the order you wrote them
+
+abstract:
+  "In on announcing if of comparison pianoforte projection. Maids hoped gay yet bed asked blind dried point. On abroad danger likely regret twenty edward do. Too horrible consider followed may differed age. An rest if more five mr of. Age just her rank met down way. Attended required so in cheerful an. Domestic replying she resolved him for did. Rather in lasted no within no." 
+---
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+```{r knitr.global_options, include=F}
+knitr::opts_chunk$set(out.width = "70%", fig.align = "center", echo=FALSE, warning=FALSE, message=FALSE, tidy.opts=list(width.cutoff=60), tidy=TRUE)
+```
+
+```{r }
+source("add/libraries.R")
+# source("add/Functions.R")
+# source("add/load_files.R")
+```
+
+\pagenumbering{gobble}
+\newpage
+
+```{r child= "01_introduction.Rmd"}
+```
+
+\newpage
+
+```{r child= "02_theory.Rmd"}
+```
+
+\newpage
+
+```{r child= "03_methods.Rmd"}
+```
+
+\newpage
+
+```{r child= "04_results.Rmd"}
+```
+
+\newpage
+
+```{r child= "05_conclusion.Rmd"}
+```
+
+\newpage
+
+```{r child= "06_references.Rmd"}
+```
