@@ -1634,3 +1634,65 @@ plot_mse_mean_mean <- function(mse_in, mse_out, title="",scale_fac=3) {
   par(par_default)
 }
 
+keras_recurrent_lstm_predict<-function(data_obj,number_neurons,period_sharpe,epochs,anz_real)
+{
+  train_set<-data_obj$train_set
+  test_set<-data_obj$test_set
+  target_out<-data_obj$target_out
+  target_in<-data_obj$target_in
+  data_mat<-data_obj$data_mat
+  
+  target_train<-train_set[,1]
+  explanatory_train<-as.matrix(train_set[,2:ncol(train_set)])
+  target_test<-test_set[,1]
+  explanatory_test<-as.matrix(test_set[,2:ncol(train_set)])
+  
+  # This is a particular formatting of the data for lstm-nets in keras (it differs from rrn package or mxnet)  
+  y_train<-as.matrix(train_set[,1])
+  #  plot(y_train)
+  dim(y_train)
+  x_train<-array(as.matrix(train_set[,2:ncol(train_set)]),dim=c(dim(as.matrix(train_set[,2:ncol(train_set)])),1))
+  dim(x_train)
+  
+  y_test<-as.matrix(test_set[,1])
+  dim(y_test)
+  x_test<-array(as.matrix(test_set[,2:ncol(test_set)]),dim=c(dim(as.matrix(test_set[,2:ncol(test_set)])),1))
+  dim(x_test)
+  
+  
+  
+  MSE_mat<-matrix(ncol=1,nrow=anz_real)
+  colnames(MSE_mat)<-"Out sample MSE"
+  
+  pb <- txtProgressBar(min = 1, max = anz_real, style = 3)
+  batch_size <- nrow(explanatory_train)
+  sharpe_keras<-1:anz_real
+  # One could try alternative set.seeds and/or larger anz_real
+  #  use_session_with_seed(1, disable_gpu = FALSE, disable_parallel_cpu = FALSE)
+  for (i in 1:anz_real)#i<-1
+  {
+    
+    
+    # Note that loss and mean-squared error are identical in our case (since we selected MSE as performance measure)
+    #   In-sample (training) and out-of-sample (validation) MSEs
+    #   Slight overfitting visible for epochs>100
+    fit_keras_net<-estimate_keras_lstm_func(x_train,y_train,x_test,y_test,number_neurons,data_mat,batch_size,epochs)
+    
+    predicted_keras<-fit_keras_net$predicted_keras_lstm
+    if (i==1)
+    {
+      predicted_mat<-predicted_keras
+    } else
+    {
+      predicted_mat<-cbind(predicted_mat,predicted_keras)
+    }
+    MSE_mat[i,]<-fit_keras_net$MSE.keras_lstm
+    # Go long or short depending on sign of forecast
+    #   We do not need to lag the signal here since the forecast is based on (already) lagged data 
+    
+    setTxtProgressBar(pb, i)
+  }
+  close(pb)
+  return(list(MSE_mat=MSE_mat,predicted_mat=predicted_mat))
+} 
+
