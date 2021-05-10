@@ -2,4 +2,23 @@
 
 This section covers how to define a trading strategy from the trained networks. It is also dedicated to the topic of how the performance is evaluated. 
 
-### 3.1. Training of a 
+### 3.1. Data exploration
+
+First, we will explore the the development of ETH over time. Figure \ref{fig:eth_exploration} shows the price, the logarithmic price and the logarithmic return. The logarithmic price is used to better compare the changes from the price as the relative change becomes visible. The same is true for the log return which shows stationarity. In the first two plots the local peaks are well visible, which reached a then ATH of USD 1313 in January 2018. It can also be seen that we are in a bull run at the time of writing this paper. In the logarithmized return, it can be seen that the volatility is not constant and thus shows volatility clusters. 
+
+```{r eth_exploration, fig.align='center', out.width='80%', fig.cap='Time plot of the price, logarithmized price and logarithmized return based on the price for ETH/USD. Large (crypto) market phase dependencies and volatility persistence are evident.', echo=FALSE}
+knitr::include_graphics("images/eth_exploration.png")
+```
+
+Continuing with the autocorrelation (ACF) and partial autocorrelation (PACF), we notice a dependency structure in both cases. The ACF plot in figure \ref{fig:dependency} show that lags 5, 10, 16, 17 and 19 are significantly stronger than just white noise. Similarly, lags 5, 10, 16, 17 and 19 are significant in the PACF plot. This information should be kept in mind when choosing the optimal network architecture of the neural network as it seemingly makes sense to include enough data points. 
+
+```{r dependency, fig.align='center', out.width='80%', fig.cap='Autocorrelation and partial autocorrelation of logarithmic return', echo=FALSE}
+knitr::include_graphics("images/dependency.png")
+```
+
+Optimization of the BIC with the auto.arima function from the package 'forecast' indicates that it could be modeled by an ARMA(3,3). However, occasional volatility clustering of the standardized residuals may suggest that model assumptions for the error term (white noise) are possibly violated. Since we are working with neural networks, we will deal with the network architecture next. 
+
+### 3.1. FFN network architecture
+
+
+

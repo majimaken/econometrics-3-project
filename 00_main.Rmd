@@ -1,7 +1,7 @@
 ---
 title: "The impact of the network architecture and the network type of neural networks on a trading strategy"
 subtitle: "OEKO3 Final Project"
-author: Pascal Buehler, Ken Geeler, Philipp Rieser
+author: Pascal Bühler, Ken Geeler, Philipp Rieser
 date: "Spring Semester 2021"
 output: 
   pdf_document:
