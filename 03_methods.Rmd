@@ -18,7 +18,10 @@ knitr::include_graphics("images/dependency.png")
 
 Optimization of the BIC with the auto.arima function from the package 'forecast' indicates that it could be modeled by an ARMA(3,3). However, occasional volatility clustering of the standardized residuals may suggest that model assumptions for the error term (white noise) are possibly violated. Since we are working with neural networks, we will deal with the network architecture next. 
 
-### 3.1. FFN network architecture
+### 3.1. RNN network architecture
 
+- Welche Kombinationen testen?
+- Was wird optimiert? (MSE)
+- Sharpe von in-sample / out-of-sample vergleichen
 
 
