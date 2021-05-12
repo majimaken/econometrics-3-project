@@ -5,9 +5,10 @@ author: Pascal Bühler, Ken Geeler, Philipp Rieser
 date: "Spring Semester 2021"
 output: 
   pdf_document:
-    toc:  yes
+    toc: no
     df_print: paged
 bibliography: add/doc.bib
+linkcolor: red
 csl:  add/ieee.csl
 header-includes:
 - \usepackage{pdfpages}
@@ -28,12 +29,19 @@ knitr::opts_chunk$set(out.width = "70%", fig.align = "center", echo=FALSE, warni
 
 ```{r }
 source("add/libraries.R")
-# source("add/Functions.R")
-# source("add/load_files.R")
+source("add/Functions_RNN.R")
 ```
 
 \pagenumbering{gobble}
 \newpage
+
+```{=tex}
+\setcounter{tocdepth}{4}
+\tableofcontents
+```
+
+\newpage
+\pagenumbering{arabic}
 
 ```{r child= "01_introduction.Rmd"}
 ```

@@ -1,56 +1,142 @@
-## 3. Methods {#methods}
+rm(list = ls())
+source("add/libraries.R")
+source("add/Functions_RNN.R")
 
-This section covers how to define a trading strategy from the trained networks. It is also dedicated to the topic of how the performance is evaluated. 
 
-### 3.1. Data exploration
-
-First, we will explore the the development of ETH over time. Figure \ref{fig:eth_exploration} shows the price, the logarithmic price and the logarithmic return. The logarithmic price is used to better compare the changes from the price as the relative change becomes visible. The same is true for the log return which shows stationarity. In the first two plots the local peaks are well visible, which reached a then ATH (All-Time High) of USD 1313 in January 2018. It can also be seen that we are in a bull run at the time of writing this paper. In the logarithmized return, it can be seen that the volatility is not constant and thus shows volatility clusters.
-
-&nbsp;
-
-```{r eth_exploration, fig.align='center', out.width='80%', fig.cap='Time plot of the price, logarithmized price and logarithmized return based on the price for ETH/USD. Large (crypto) market phase dependencies and volatility persistence are evident.', echo=FALSE, fig.width = 8, fig.height = 6.5}
-# knitr::include_graphics("images/eth_exploration.png")
-# knitr::include_graphics("images/eth_exploration1.png")
+# Etherium
 load("data/ETH_2021-05-05.rda")
+head(ETH)
+tail(ETH)
+
 ETH <- ETH["::2021-04-30"]
+
+# Define log returns based on closing prices
 logret <- diff(log(ETH$`ETH-USD.Close`))
 logret <- na.omit(logret)
-colnames(logret) <- "ETH Log Returns"
+colnames(logret) <- "ETH_LR"
+head(logret)
+tail(logret)
+
+# Plots
+load("data/ETH_2021-05-05.rda")
+ETH <- ETH["::2021-04-30"]
 par(mfrow = c(3,1))
 plot(ETH$`ETH-USD.Close`, col = 1, main = "ETH/USD", lwd = 0.7)
 plot(log(ETH$`ETH-USD.Close`), col = 1, main = "Logarithmic ETH/USD", lwd = 0.7)
 plot(logret, col = 1, main = "Logarithmic Returns ETH/USD", lwd = 0.7)
-```
-\newpage
 
-Continuing with the autocorrelation (ACF) and partial autocorrelation (PACF), we notice a dependency structure in both cases. The ACF plot in figure \ref{fig:dependency} show that lags 5, 10, 16, 17 and 19 are significantly stronger than just white noise. Similarly, lags 5, 10, 16, 17 and 19 are significant in the PACF plot. This information should be kept in mind when choosing the optimal network architecture of the neural network as it seemingly makes sense to include enough data points. 
 
-&nbsp;
-
-```{r dependency, fig.align='center', out.width='80%', fig.cap='Autocorrelation and partial autocorrelation of logarithmic return of the ETH/USD-Prices.', echo=FALSE, fig.width = 7, fig.height = 4.5}
-# knitr::include_graphics("images/dependency.png")
-# knitr::include_graphics("images/dependency1.png")
+# ACF
 par(mfrow = c(1,2))
-ACFplot(logret, ymax = 0.07, maxlag = 25, main = "Autocorrelation ETH/USD")
-PACFplot(logret, ymax = 0.07, maxlag = 25, main = "Partial Autocorrelation ETH/USD")
-```
-
-&nbsp;
-
-Optimization of the ETH with the `auto.arima` function from the package `forecast` indicates that it could be modeled by an ARMA(3,3). However, occasional volatility clustering of the standardized residuals may suggest that model assumptions for the error term (white noise) are possibly violated. Since we are working with neural networks, we will deal with the network architecture next. 
-
-\newpage
-
-### 3.1. Neural Network Architecture
-
-```{r meanplot1, fig.align='center', out.width='100%', fig.cap='asdasdasd', echo=FALSE, fig.width = 12, fig.height = 8}
-load("data/mean_ffn.rda")
-load("data/mean_rnn.rda")
-load("data/mean_lstm.rda")
-load("data/mean_gru.rda")
-load("data/data_obj.rda")
+acf(logret, main = "ACF")
+pacf(logret, main = "PACF")
 
 
+# subset
+subi <- logret["2020-10-01::2021-04-30"]
+par(mfrow = c(1,2))
+acf(subi, main = "ACF")
+pacf(subi, main = "PACF")
+# Sicher bis lag = 10
+
+
+head(logret)
+data_obj <- data_function(x=logret, lags=10, in_out_sep="2021-04-01", start="2020-10-01", end="2021-04-30")
+# save(data_obj, file="data/data_obj.rda")
+c(as.character(time(head(data_obj$target_in, 1))), as.character(time(tail(data_obj$target_in, 1))), as.character(length(data_obj$target_in)))
+c(as.character(time(head(data_obj$target_out, 1))), as.character(time(tail(data_obj$target_out, 1))), as.character(length(data_obj$target_out)))
+fiti <- nn_nl_comb_sharpe_mse(maxneuron=10, maxlayer=3, real=100, data_obj)
+# 10.27h
+# optim_ffn <- fiti
+# save(optim_ffn, file = "data/optim_ffn.rda")
+
+
+fiti_rnn <- rnn_nl_comb_sharpe_mse(maxneuron=10,
+                                   maxlayer=3,
+                                   real=10,
+                                   data_obj=data_obj,
+                                   epochs=10,
+                                   nn_type="rnn")
+# 1.345h
+# optim_rnn <- fiti_rnn
+# save(optim_rnn, file = "data/optim_rnn.rda")
+
+fiti_lstm <- rnn_nl_comb_sharpe_mse(maxneuron=10,
+                                   maxlayer=3,
+                                   real=10,
+                                   data_obj=data_obj,
+                                   epochs=10,
+                                   nn_type="lstm")
+# 1.344h
+# optim_lstm <- fiti_lstm
+# save(optim_lstm, file = "data/optim_lstm.rda")
+
+fiti_gru <- rnn_nl_comb_sharpe_mse(maxneuron=10,
+                                    maxlayer=3,
+                                    real=10,
+                                    data_obj=data_obj,
+                                    epochs=10,
+                                    nn_type="gru")
+# 1.252h
+# optim_gru <- fiti_gru
+# save(optim_gru, file = "data/optim_gru.rda")
+
+# MSE-IN####
+par(mfrow=c(2,2))
+hist(mean_ffn$mse_in)
+hist(mean_rnn$mse_in)
+hist(mean_lstm$mse_in)
+hist(mean_gru$mse_in)
+
+# MSE-OUT####
+par(mfrow=c(2,2))
+hist(mean_ffn$mse_out)
+hist(mean_rnn$mse_out)
+hist(mean_lstm$mse_out)
+hist(mean_gru$mse_out)
+
+# Sharpe-IN####
+par(mfrow=c(2,2))
+hist(mean_ffn$sharpe_in)
+hist(mean_rnn$sharpe_in)
+hist(mean_lstm$sharpe_in)
+hist(mean_gru$sharpe_in)
+
+# Sharpe-OUT####
+par(mfrow=c(2,2))
+hist(mean_ffn$sharpe_out)
+hist(mean_rnn$sharpe_out)
+hist(mean_lstm$sharpe_out)
+hist(mean_gru$sharpe_out)
+
+
+
+# Analysis####
+head(optim_ffn)
+tail(optim_ffn)
+optim_ffn
+
+# Calculate the means
+meaner <- function(dat, real) {
+  mse_in <- apply(X=dat[, seq(1, real, 4)], MARGIN=1, FUN=mean)
+  mse_out <- apply(X=dat[, seq(2, real, 4)], MARGIN=1, FUN=mean)
+  sharpe_in <- apply(X=dat[, seq(3, real, 4)], MARGIN=1, FUN=mean)
+  sharpe_out <- apply(X=dat[, seq(4, real, 4)], MARGIN=1, FUN=mean)
+  
+  return(list(mse_in=mse_in, mse_out=mse_out, sharpe_in=sharpe_in, sharpe_out=sharpe_out))
+}
+
+mean_ffn <- meaner(optim_ffn, 100)
+mean_rnn <- meaner(optim_rnn, 10)
+mean_lstm <- meaner(optim_lstm, 10)
+mean_gru <- meaner(optim_gru, 10)
+
+save(mean_ffn, file="data/mean_ffn.rda")
+save(mean_rnn, file="data/mean_rnn.rda")
+save(mean_lstm, file="data/mean_lstm.rda")
+save(mean_gru, file="data/mean_gru.rda")
+
+# MSE-Plots ALL####
 par_default <- par(no.readonly = TRUE)
 par(mfrow=c(2,1), mar=c(4,5,3,2))
 plot(mean_ffn$mse_in,
@@ -124,13 +210,9 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, cex=0.8, bty='n',
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
-```
 
 
-\newpage
 
-
-```{r meanplot2, fig.align='center', out.width='100%', fig.cap='asdasdasd', echo=FALSE, fig.width = 12, fig.height = 8}
 # MSE-Plots ohne FFN####
 par_default <- par(no.readonly = TRUE)
 par(mfrow=c(2,1), mar=c(4,5,3,2))
@@ -204,17 +286,23 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, cex=0.8, bty='n',
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
-```
 
 
-\newpage
 
-```{r sharpeplot, fig.align='center', out.width='100%', fig.cap='asdasdasd', echo=FALSE, fig.width = 12, fig.height = 8}
+
+
+
 # Sharpe-Plots####
 perf_in <- as.numeric(data_obj$target_in)
 perf_out <- as.numeric(data_obj$target_out)
 sharpe_bnh_in <- as.numeric(sqrt(365)*mean(perf_in)/sqrt(var(perf_in)))
 sharpe_bnh_out <- as.numeric(sqrt(365)*mean(perf_out)/sqrt(var(perf_out)))
+
+# mean_ffn
+# mean_rnn
+# mean_lstm
+# mean_gru
+
 par_default <- par(no.readonly = TRUE)
 par(mfrow=c(2,1), mar=c(4,5,3,2))
 plot(mean_ffn$sharpe_in,
@@ -289,4 +377,3 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, cex=0.8, bty='n',
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
-```
