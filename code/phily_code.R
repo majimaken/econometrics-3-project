@@ -8,6 +8,8 @@ load("data/ETH_2021-05-05.rda")
 head(ETH)
 tail(ETH)
 
+ETH <- ETH["::2021-04-30"]
+
 # Define log returns based on closing prices
 logret <- diff(log(ETH$`ETH-USD.Close`))
 logret <- na.omit(logret)
@@ -16,6 +18,8 @@ head(logret)
 tail(logret)
 
 # Plots
+load("data/ETH_2021-05-05.rda")
+ETH <- ETH["::2021-04-30"]
 par(mfrow = c(3,1))
 plot(ETH$`ETH-USD.Close`, col = 1, main = "ETH/USD", lwd = 0.7)
 plot(log(ETH$`ETH-USD.Close`), col = 1, main = "Logarithmic ETH/USD", lwd = 0.7)
@@ -38,6 +42,7 @@ pacf(subi, main = "PACF")
 
 head(logret)
 data_obj <- data_function(x=logret, lags=10, in_out_sep="2021-04-01", start="2020-10-01", end="2021-04-30")
+# save(data_obj, file="data/data_obj.rda")
 c(as.character(time(head(data_obj$target_in, 1))), as.character(time(tail(data_obj$target_in, 1))), as.character(length(data_obj$target_in)))
 c(as.character(time(head(data_obj$target_out, 1))), as.character(time(tail(data_obj$target_out, 1))), as.character(length(data_obj$target_out)))
 fiti <- nn_nl_comb_sharpe_mse(maxneuron=10, maxlayer=3, real=100, data_obj)
@@ -125,6 +130,11 @@ mean_ffn <- meaner(optim_ffn, 100)
 mean_rnn <- meaner(optim_rnn, 10)
 mean_lstm <- meaner(optim_lstm, 10)
 mean_gru <- meaner(optim_gru, 10)
+
+save(mean_ffn, file="data/mean_ffn.rda")
+save(mean_rnn, file="data/mean_rnn.rda")
+save(mean_lstm, file="data/mean_lstm.rda")
+save(mean_gru, file="data/mean_gru.rda")
 
 # MSE-Plots ALL####
 par_default <- par(no.readonly = TRUE)

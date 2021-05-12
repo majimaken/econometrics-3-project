@@ -1099,3 +1099,56 @@ rnn_estim <- function(data_obj, nl_comb, epochs, nn_type, learningrate) {
   
   return(list(mse_nn=mse_nn, pred_out=pred_out, pred_in=pred_in, sharpe_nn=sharpe_nn))
 }
+
+
+#.####
+# ACF####
+ACFplot <- function (R, maxlag = NULL, elementcolor = "gray", main = NULL, ymax = 0.3, ...)  {
+  R = checkData(R)
+  data = checkData(R[, 1], method = "vector", na.rm = TRUE)
+  columns = ncol(R)
+  rows = nrow(R)
+  columnnames = colnames(R)
+  if (is.null(main)) 
+    main = columnnames[1]
+  num = length(data)
+  if (is.null(maxlag)) 
+    maxlag = ceiling(10 + sqrt(num))
+  ACF = acf(data, maxlag, plot = FALSE)$acf[-1]
+  Lag = 1:length(ACF)/frequency(data)
+  minA = min(ACF)
+  U = 2/sqrt(num)
+  L = -U
+  minu = min(minA, L) - 0.01
+  plot(Lag, ACF, type = "h", ylim = c(minu, ymax), main = main, 
+       axes = FALSE, ...)
+  box(col = elementcolor)
+  axis(2, col = elementcolor, cex.axis = 0.8)
+  axis(1, col = elementcolor, cex.axis = 0.8)
+  abline(h = c(0, L, U), lty = c(1, 2, 2), col = c(1, 4, 4))
+}
+PACFplot <- function (R, maxlag = NULL, elementcolor = "gray", main = NULL, ymax = 0.3, ...)  {
+  R = checkData(R)
+  data = checkData(R[, 1], method = "vector", na.rm = TRUE)
+  columns = ncol(R)
+  rows = nrow(R)
+  columnnames = colnames(R)
+  if (is.null(main)) 
+    main = columnnames[1]
+  num = length(data)
+  if (is.null(maxlag)) 
+    maxlag = ceiling(10 + sqrt(num))
+  # ACF = acf(data, maxlag, plot = FALSE)$acf[-1]
+  PACF = t(as.matrix(pacf(data, maxlag, plot = FALSE)$acf))
+  Lag = 1:length(PACF)/frequency(data)
+  minA = min(PACF)
+  U = 2/sqrt(num)
+  L = -U
+  minu = min(minA, L) - 0.01
+  plot(Lag, PACF, type = "h", ylim = c(minu, ymax), main = main, 
+       axes = FALSE, ...)
+  box(col = elementcolor)
+  axis(2, col = elementcolor, cex.axis = 0.8)
+  axis(1, col = elementcolor, cex.axis = 0.8)
+  abline(h = c(0, L, U), lty = c(1, 2, 2), col = c(1, 4, 4))
+}

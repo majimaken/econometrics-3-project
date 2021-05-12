@@ -34,7 +34,14 @@ plot(logret, col = 1, main = "Logarithmic Returns ETH/USD", lwd = 0.7)
 par(mfrow = c(1,2))
 acf(logret, main = "ACF")
 pacf(logret, main = "PACF")
+
+chart.ACFplus.phil(logret, maxlag = 25, main = NULL, ymax = 0.1) 
 # dev.off()
+
+par(mfrow = c(1,2))
+ACFplot(logret, ymax = 0.07, maxlag = 25, main = "Autocorrelation ETH/USD")
+PACFplot(logret, ymax = 0.07, maxlag = 25, main = "Partial Autocorrelation ETH/USD")
+
 
 # Find best ARIMA-model using auto.arima function from forecast package
 fit <- auto.arima(logret, ic = "bic")
