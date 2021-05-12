@@ -780,3 +780,322 @@ read_main_func_monthly<-function(reload_data,in_out_sample_separator)#(path.dat,
 
 
 
+
+#.####
+# NN####
+# Train/Predict various neural nets
+# - Define first the data_obj with the funtion: data_function
+#   x: data
+#   lags: amount of lags (e.g. acf(x) -> significant = 6 -> lags=6)
+#   start: Startdate (e.g. 2020-01-01)
+#   end: Enddate (eg. 2020-07-31)
+#   in_out_sep: Seperator (eg. 2020-07-01)
+#   data_function will return a few data objects which are needed for
+#   the computation of the MSE and Sharpe
+
+# - use nn_nl_comb_sharpe_mse
+#   define maxneurons/layers and the amount of realizations
+
+## MSE Sharpe Function####
+nn_nl_comb_sharpe_mse <- function(maxneuron=3, maxlayer=3, real=10, data_obj) {
+  starttime=Sys.time()
+  # Define Input Grid
+  # needs input grid function
+  combmat <- input_grid(maxneuron,maxlayer)
+  
+  
+  # Naming the  grid with combinations
+  ind <- rep(NA,dim(combmat)[1])
+  for(k in 1:dim(combmat)[1])
+  {
+    x <- as.vector(combmat[k,])
+    ind[k] <- toString(as.character(x[x!=0]))
+  }
+  
+  # Define result matrix
+  mati <- matrix(nrow=dim(combmat)[1], ncol=real*4, 0)
+  mati <- as.data.frame(mati)
+  rownames(mati) <- ind
+  
+  
+  #creating , testing , neural net
+  for( i in 1: dim(combmat)[1]) {
+    pb <- txtProgressBar(min = 1, max = dim(combmat)[1], style = 3)
+    
+    x=as.vector(combmat[i,])
+    x= x[x!=0]
+    
+    for(k in seq(1,real*4,4)) {
+      
+      net <- nn_estim(data_obj, nl_comb=x)
+      
+      mati[i, k:(k+3)] <- c(net$mse_nn, net$sharpe_nn)
+    }
+    
+    cat("\014")
+    print(paste("Elapsed Time: " ,Sys.time()-starttime))
+    print(paste("Iteration: ", i, "of", dim(combmat)[1]))
+    setTxtProgressBar(pb, i)
+    
+  }
+  
+  # close(pb)
+  print(paste("Overall Time: " ,Sys.time()-starttime))
+  return(mati)
+}
+
+## Data Function####
+data_function <- function(x, lags, in_out_sep, start="", end="",autoassign=F) {
+  # Define startpoints
+  x <- x[paste(start,"::", end, sep="")]
+  data_mat <- x
+  
+  # Create lagged data
+  for (j in 1:lags)
+    data_mat <- cbind(data_mat, lag(x, k=j))
+  
+  # Remove NA's
+  data_mat <- na.exclude(data_mat)
+  
+  
+  # Specify in- and out-of-sample episodes
+  # Target in-sample (current data)
+  target_in <- data_mat[paste("/",in_out_sep,sep=""),1]
+  # Remove last value
+  target_in <- target_in[1:(length(target_in)-1),1]
+  
+  # Target out of sample (current data)
+  target_out <- data_mat[paste(in_out_sep,"/",sep=""),1]
+  
+  # Scaling data for the NN
+  maxs <- apply(data_mat, 2, max)
+  mins <- apply(data_mat, 2, min)
+  # Transform data into [0,1]
+  scaled <- scale(data_mat, center = mins, scale = maxs - mins)
+  
+  train_set_xts <- scaled[paste("/",in_out_sep,sep=""),]
+  test_set_xts <- scaled[paste(in_out_sep,"/",sep=""),]
+  # Train-test split
+  train_set <- scaled[paste("/",in_out_sep,sep=""),]
+  # Remove last value
+  train_set <- train_set[1:(dim(train_set)[1]-1),]
+  
+  test_set <- scaled[paste(in_out_sep,"/",sep=""),]
+  
+  train_set <- as.matrix(train_set)
+  test_set <- as.matrix(test_set)
+  
+  # Formula
+  colnames(train_set) <- paste("lag",0:(ncol(train_set)-1),sep="")
+  n <- colnames(train_set)
+  f <- as.formula(paste("lag0 ~", paste(n[!n %in% "lag0"], collapse = " + ")))
+  
+  if(autoassign)
+  {
+    assign("data_mat",data_mat,.GlobalEnv)
+    assign("target_in",target_in,.GlobalEnv)
+    assign("target_out",target_out,.GlobalEnv)
+    assign("train_set",train_set,.GlobalEnv)
+    assign("test_set",test_set,.GlobalEnv)
+    assign("train_set_xts",train_set_xts,.GlobalEnv)
+    assign("test_set_xts",test_set_xts,.GlobalEnv)
+    assign("f",f,.GlobalEnv)
+  }
+  
+  
+  return(list(data_mat=data_mat,
+              target_in=target_in,
+              target_out=target_out,
+              train_set=train_set,
+              test_set=test_set,
+              f=f))
+}
+
+
+
+
+## Estimate Fun####
+nn_estim <- function(data_obj, nl_comb) {
+  
+  # Prepare data
+  train_set <- data_obj$train_set
+  test_set <- data_obj$test_set
+  data_mat <- data_obj$data_mat
+  target_in <- data_obj$target_in
+  target_out <- data_obj$target_out
+  f <- as.formula(data_obj$f)
+  
+  
+  # Train NeuralNet
+  nn <- neuralnet(f, data=train_set, hidden=nl_comb, linear.output=T, stepmax = 1e+08)
+  
+  
+  # In sample performance
+  pred_in_scaled <- nn$net.result[[1]]
+  # Scale back from interval [0,1] to original log-returns
+  pred_in <- pred_in_scaled*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  # In-sample MSE
+  train_rescaled <- train_set[,1]*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  mse_in <- mean((train_rescaled - pred_in)^2)
+  
+  # In-sample Sharpe
+  perf_in <- (sign(pred_in))*target_in
+  sharpe_in <- as.numeric(sqrt(365)*mean(perf_in)/sqrt(var(perf_in)))
+  
+  # Out-of-sample performance
+  # Compute out-of-sample forecasts
+  # pr.nn <- compute(nn, as.matrix(test_set[,2:ncol(test_set)]))
+  pr.nn <- predict(nn, as.matrix(test_set[,2:ncol(test_set)]))
+  
+  predicted_scaled <- pr.nn
+  # Results from NN are normalized (scaled)
+  # Descaling for comparison
+  pred_out <- predicted_scaled*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  test_rescaled <- test_set[,1]*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  # Calculating MSE
+  mse_out <- mean((test_rescaled - pred_out)^2)
+  
+  # Out of sample Sharpe
+  perf_out <- (sign(pred_out))*target_out
+  sharpe_out <- sqrt(365)*mean(perf_out)/sqrt(var(perf_out))
+  
+  # Compare in-sample and out-of-sample
+  mse_nn <- c(mse_in, mse_out)
+  sharpe_nn <- c(sharpe_in, sharpe_out)
+  
+  return(list(mse_nn=mse_nn, pred_out=pred_out, pred_in=pred_in, sharpe_nn=sharpe_nn))
+}
+
+## Input Grid Function####
+input_grid <- function(n=3, l=3) {
+  anz <- n^(1:l)
+  mat <- matrix(0, nrow=sum(anz), ncol=l)
+  
+  
+  i_end <- cumsum(anz)
+  i_start <- anz-1
+  i_start <- i_end - i_start
+  
+  
+  for(j in 0:(length(anz)-1)) {
+    for (i in (1+j):l) {
+      mat[i_start[i]:i_end[i], i-j] <- rep(1:n, rep(n^(j), n))
+    }
+  }
+  return(as.data.frame(mat))
+}
+
+
+
+## RNN####
+rnn_nl_comb_sharpe_mse <- function(maxneuron=3, maxlayer=3, real=10, data_obj, epochs=10, nn_type="rnn", learningrate=0.05) {
+  starttime=Sys.time()
+  # Define Input Grid
+  # needs input grid function
+  combmat <- input_grid(maxneuron,maxlayer)
+  
+  
+  # Naming the  grid with combinations
+  ind <- rep(NA,dim(combmat)[1])
+  for(k in 1:dim(combmat)[1])
+  {
+    x <- as.vector(combmat[k,])
+    ind[k] <- toString(as.character(x[x!=0]))
+  }
+  
+  # Define result matrix
+  mati <- matrix(nrow=dim(combmat)[1], ncol=real*4, 0)
+  mati <- as.data.frame(mati)
+  rownames(mati) <- ind
+  
+  
+  #creating , testing , neural net
+  for( i in 1: dim(combmat)[1]) {
+    pb <- txtProgressBar(min = 1, max = dim(combmat)[1], style = 3)
+    
+    x=as.vector(combmat[i,])
+    x= x[x!=0]
+    
+    for(k in seq(1,real*4,4)) {
+      
+      net <- rnn_estim(data_obj, nl_comb=x, epochs, nn_type, learningrate)
+      
+      
+      mati[i, k:(k+3)] <- c(net$mse_nn, net$sharpe_nn)
+    }
+    
+    cat("\014")
+    print(paste("Elapsed Time: " ,Sys.time()-starttime))
+    print(paste("Iteration: ", i, "of", dim(combmat)[1]))
+    setTxtProgressBar(pb, i)
+    
+  }
+  
+  # close(pb)
+  print(paste("Overall Time: " ,Sys.time()-starttime))
+  return(mati)
+}
+
+
+rnn_estim <- function(data_obj, nl_comb, epochs, nn_type, learningrate) {
+  
+  # Prepare data
+  train_set <- data_obj$train_set
+  test_set <- data_obj$test_set
+  target_out <- data_obj$target_out
+  target_in <- data_obj$target_in
+  data_mat <- data_obj$data_mat
+  
+  
+  # This is a particular formatting of the data for rnn recurrent (it differs from keras package or mxnet)  
+  
+  y_train_rnn <- as.matrix(train_set[,1])
+  x_train_rnn <- array(as.matrix(train_set[,2:ncol(train_set)]),dim=c(dim(as.matrix(train_set[,2:ncol(train_set)]))[1],1,dim(as.matrix(train_set[,2:ncol(train_set)]))[2]))
+  
+  y_test_rnn <- as.matrix(test_set[,1])
+  x_test_rnn <- array(as.matrix(test_set[,2:ncol(test_set)]),dim=c(dim(as.matrix(test_set[,2:ncol(test_set)]))[1],1,dim(as.matrix(test_set[,2:ncol(test_set)]))[2]))
+  
+  batch_size <- nrow(train_set)
+  
+  # Train NeuralNet
+  model <- trainr(Y = y_train_rnn,
+                  X = x_train_rnn,
+                  learningrate = learningrate,
+                  hidden_dim = nl_comb,
+                  numepochs = epochs,
+                  nn_type=nn_type)
+  
+  # In sample performance
+  pred_in_scaled <- predictr(model, x_train_rnn)
+  # Scale back from interval [0,1] to original log-returns
+  pred_in <- pred_in_scaled*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  # In-sample MSE
+  train_rescaled <- train_set[,1]*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  mse_in <- mean((train_rescaled - pred_in)^2)
+  
+  # In-sample Sharpe
+  perf_in <- (sign(pred_in))*target_in
+  sharpe_in <- as.numeric(sqrt(365)*mean(perf_in)/sqrt(var(perf_in)))
+  
+  # Out-of-sample performance
+  # Compute out-of-sample forecasts
+  pr.nn <- predictr(model, x_test_rnn)
+  
+  predicted_scaled <- pr.nn
+  # Results from NN are normalized (scaled)
+  # Descaling for comparison
+  pred_out <- predicted_scaled*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  test_rescaled <- test_set[,1]*(max(data_mat[,1])-min(data_mat[,1]))+min(data_mat[,1])
+  # Calculating MSE
+  mse_out <- mean((test_rescaled - pred_out)^2)
+  
+  # Out of sample Sharpe
+  perf_out <- (sign(pred_out))*target_out
+  sharpe_out <- sqrt(365)*mean(perf_out)/sqrt(var(perf_out))
+  
+  # Compare in-sample and out-of-sample
+  mse_nn <- c(mse_in, mse_out)
+  sharpe_nn <- c(sharpe_in, sharpe_out)
+  
+  return(list(mse_nn=mse_nn, pred_out=pred_out, pred_in=pred_in, sharpe_nn=sharpe_nn))
+}
