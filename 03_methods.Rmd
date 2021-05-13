@@ -326,3 +326,63 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
 legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, cex=0.8, bty='n',
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r gru, fig.align='center', out.width='80%', fig.cap='GRU out of sample', echo=FALSE}
+knitr::include_graphics("images/gru_out_1000_30epochs.jpeg")
+
+```
+
+
+```{r rnn, fig.align='center', out.width='80%', fig.cap='rnn out of sample', echo=FALSE}
+knitr::include_graphics("images/rnn_out_1000_30epochs.jpeg")
+
+```
+
+
+```{r lstm, fig.align='center', out.width='80%', fig.cap='lstm out of sample', echo=FALSE}
+knitr::include_graphics("images/lstm_out_1000_30epochs.jpeg")
+
+```
+
+```{r ff, fig.align='center', out.width='80%', fig.cap='lstm out of sample', echo=FALSE}
+knitr::include_graphics("images/ff_out_10000.jpeg")
+
+```
+
+
+```{r performance, fig.align='center', out.width='100%', fig.cap='performance out of sample', echo=FALSE}
+knitr::include_graphics("images/performance comparison.jpeg")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
