@@ -403,3 +403,50 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, cex=0.8, bty='n',
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
+
+
+## FFN (1,4), 6.599511
+# Best
+mean_ffn$sharpe_out[mean_ffn$sharpe_out==max(mean_ffn$sharpe_out)]
+which(names(mean_ffn$sharpe_in) == "1, 4")
+
+mean_ffn$mse_in[14]
+mean(mean_ffn$mse_in)
+
+mean_ffn$mse_out[14]
+mean(mean_ffn$mse_out)
+
+
+## RNN (7), 6.219602
+mean_rnn$sharpe_out[mean_rnn$sharpe_out==max(mean_rnn$sharpe_out)]
+which(names(mean_rnn$sharpe_in) == "7")
+
+mean_rnn$mse_in[7]
+mean(mean_rnn$mse_in)
+
+mean_rnn$mse_out[7]
+mean(mean_rnn$mse_out)
+
+
+## LSTM (9, 8, 2), 6.219602
+mean_lstm$sharpe_out[mean_lstm$sharpe_out==max(mean_lstm$sharpe_out)]
+which(names(mean_lstm$sharpe_in) == "9, 8, 2")
+
+mean_lstm$mse_in[982]
+mean(mean_lstm$mse_in)
+
+mean_lstm$mse_out[982]
+mean(mean_lstm$mse_out)
+
+
+
+
+## GRU (8, 9), 5.589237
+mean_gru$sharpe_out[mean_gru$sharpe_out==max(mean_gru$sharpe_out)]
+which(names(mean_gru$sharpe_in) == "8, 9")
+
+mean_gru$mse_in[89]
+mean(mean_gru$mse_in)
+
+mean_gru$mse_out[89]
+mean(mean_gru$mse_out)

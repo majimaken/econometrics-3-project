@@ -45,7 +45,7 @@ Optimization of the ETH with the `auto.arima` function from the package `forecas
 
 We would like to trade ETH/USD, which is why a trustworthy forecast is desired. Now there are countless ways how to modify neural networks and get different solutions at best. In order to reduce the scope, we limit ourselves to a 6-month in-sample and a 1-month out-of-sample split. First, this shortens the computational work and we can compare different methods and architectures using the same time period. In addition, the split is proposed in [@nnfin]. The split can be seen in figure \ref{fig:limit}, where red is the in-sample and blue is the out-of-sample. The autocorrelation function of the datasubset shows dependence at lag 5 and 10, which is why we go to a maximum of lag 10 for the input layer.
 
-In addition, we limit ourselves in terms of network architecture. On the one hand, the added value for too large networks is somewhat moderate for time series (source) and on the other hand, this would go beyond the scope of this work. For each network type presented in section [2](#theory), network architectures from 1 layer with 1 neuron to 3 layers with 10 neurons each are trained. We thus examine a total of 1100 different neuron layer combinations. To make a comparison possible, the respective in/out-of sample MSEs and Sharpe ratios are calculated for each network. To mitigate the problem of optimizing the backpropagation algorithm, 100 nets are trained and averaged for each architecture for the feedforward networks (FFN). For the recurrent network types (RNN, LSTM, GRU) only 10 networks per architecture are trained but with 10 epochs each.
+In addition, we limit ourselves in terms of network architecture. On the one hand, the added value for too large networks is somewhat moderate for time series (source) and on the other hand, this would go beyond the scope of this work. For each network type presented in section [2](#theory), network architectures from 1 layer with 1 neuron to 3 layers with 10 neurons each are trained. We thus examine a total of 1100 different neuron layer combinations, with (1) the simplest and (10,10,10) the most complex network. To make a comparison possible, the respective in/out-of sample MSEs and Sharpe ratios are calculated for each network. To mitigate the problem of optimizing the backpropagation algorithm, 100 nets are trained and averaged for each architecture for the feedforward networks (FFN). For the recurrent network types (RNN, LSTM, GRU) only 10 networks per architecture are trained but with 10 epochs each.
 
 &nbsp;
 
@@ -77,7 +77,7 @@ ACFplot(logret, ymax = 0.07, maxlag = 25, main = "Autocorrelation ETH/USD")
 
 \newpage
 
-```{r meanplot1, fig.align='center', out.width='90%', fig.cap='', echo=FALSE, fig.width = 12, fig.height = 8}
+```{r meanplot1, fig.align='center', out.width='90%', fig.cap='figurino', echo=FALSE, fig.width = 12, fig.height = 8}
 load("data/mean_ffn.rda")
 load("data/mean_rnn.rda")
 load("data/mean_lstm.rda")
@@ -126,8 +126,10 @@ plot(mean_ffn$mse_out,
      xlab="",
      xaxt="n",
      frame.plot = FALSE,
+     # ylim=c(min(mean_ffn$mse_out, mean_rnn$mse_out, mean_lstm$mse_out, mean_gru$mse_out),
+     #        max(mean_ffn$mse_out, mean_rnn$mse_out, mean_lstm$mse_out, mean_gru$mse_out)))
      ylim=c(min(mean_ffn$mse_out, mean_rnn$mse_out, mean_lstm$mse_out, mean_gru$mse_out),
-            max(mean_ffn$mse_out, mean_rnn$mse_out, mean_lstm$mse_out, mean_gru$mse_out)))
+            0.01))
 lines(mean_rnn$mse_out, col=2)
 lines(mean_lstm$mse_out, col=3)
 lines(mean_gru$mse_out, col=4)
