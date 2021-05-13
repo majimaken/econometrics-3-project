@@ -1097,7 +1097,7 @@ rnn_estim <- function(data_obj, nl_comb, epochs, nn_type, learningrate) {
   mse_nn <- c(mse_in, mse_out)
   sharpe_nn <- c(sharpe_in, sharpe_out)
   
-  return(list(mse_nn=mse_nn, pred_out=pred_out, pred_in=pred_in, sharpe_nn=sharpe_nn))
+  return(list(mse_nn=mse_nn, pred_out=pred_out, pred_in=pred_in, sharpe_nn=sharpe_nn,perf_out=perf_out))
 }
 
 
