@@ -40,6 +40,32 @@ pacf(subi, main = "PACF")
 # Sicher bis lag = 10
 
 
+
+subi <- logret["2020-10-01::2021-04-30"]
+df_sub <- data.frame(date = ymd(time(subi)), value = as.numeric(subi))
+par(mfrow=c(1,2))
+
+plot(df_sub, type="l", main="2020-10-01/2021-04-30 ETH/USD",
+     ylab="Log Return", xlab="Time", yaxt="n", xaxt="n")
+box(col = "gray")
+axis(2, col = "gray", cex.axis = 0.8)
+axis(1, col = "gray", cex.axis = 0.8,
+     at=as.numeric(df_sub$date[c(1, 53, 105, 157, 209)]),
+     labels=c("10-01", "11-25", "01-16", "03-09", "04-30"))
+rect(xleft=par('usr')[1],
+     xright=as.numeric(df_sub$date[169]),
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#FF00001A")
+rect(xleft=as.numeric(df_sub$date[170]),
+     xright=par('usr')[2],
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#00FFFF1A")
+
+ACFplot(logret, ymax = 0.07, maxlag = 25, main = "Autocorrelation ETH/USD")
+
+
 head(logret)
 data_obj <- data_function(x=logret, lags=10, in_out_sep="2021-04-01", start="2020-10-01", end="2021-04-30")
 # save(data_obj, file="data/data_obj.rda")
