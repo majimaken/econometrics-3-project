@@ -15,9 +15,9 @@ knitr::include_graphics("images/MLP.jpeg")
 
 Every neural network has an input layer, which consists of one or more nodes. This number is determined from the training data and tells us how many features should be delivered to the neural network. In the case of Ethereum (ETH) prices, we could use today's price and the prices of the last 10 days (lags 1-10), so the input layer would consist of 11 nodes. Some configurations also require a bias term to adjust the output along with the weighted sum, which is also added to the input layer. Similarly to the input layer, each neural network has exactly one output layer. This can consist of one or more nodes. In this thesis, MLP is used as a regressor and therefore only one neuron is needed in this layer.
 
-\newpage
-
 In between are the hidden layers, whose number and size can be configured as desired. The challenge is to find an optimal and efficient configuration without causing overfitting of the training data. The number of hidden layers depends primarily on the application area of the neural network. For example, working with image recognition would require more layers since the image file is broken down into individual pixels. Subsequently, the layers are used to optimize from rough outlines to the smallest detail. In our research, we came across several methods or 'rules of thumb' to optimize the model. A frequently suggested method is explained by Andrej Karpathy (director of the AI department of Tesla, Inc.). His GitHub entry recommends the approach of starting with a model that is too large that causes overfitting. Subsequently, the model is reduced by focusing on increasing training loss and improving validation loss [@recipe_training].
+
+The feedforward neural network used in this paper is implemented using the R package 'neuralnet'. 
 
 ### 2.2. Recurrent neural networks (RNN) {#RNN}
 
@@ -36,8 +36,6 @@ knitr::include_graphics("images/RNN.jpg")
 &nbsp;
 
 Figure \ref{fig:RNN} shows different process sequences of the RNN, which vary depending on the field of application. The red rectangles at the bottom represent the number of inputs. Similarly, the blue rectangles represent the outputs that come out of the RNN. The term 'many' refers to $>1$ and is illustrated with three rectangles in the figure. The green ones represent the hidden states $h_i$ of all time steps and thus can be seen as the memory of the neural network. The green arrows show that the previous hidden state is used as input for the current step. Starting from the left: one-to-many can be used for image captioning (extracting sequence of words from images), many-to-one for sentiment classification from sequence of words, many-to-many for machine translation (sequence of words in one language to sequence of words in another language) and many-to-many for video classification on frame level [@RNN_Stanford]. For the prediction of the ETH/USD exchange rate in this paper, we deal with the process many-to-one. This method combines information from inputs and hidden states into one single prediction value.
-
-\newpage
 
 ```{r RNN_many_to_one, fig.align='center', out.width='70%', fig.cap= 'Computational graph of a many-to-one RNN.', echo=FALSE}
 
@@ -63,3 +61,20 @@ Equation \ref{eq:RNN_many_to_one_1} shows how the hidden states $h_{i}$ are calc
 ```
 
 Looking at equation \ref{eq:RNN_many_to_one_2}, $y_{i}$ equals the output and desired prediction of the RNN. The prediction results from the matrix-vector product of the weight matrix $W_{y}$ with dimension (length($h$)$\times$length($y$)) and the hidden states vector $h$.
+
+\newpage
+
+### 2.3. Long-Short Term Memory (LSTM) and Gated Recurrent Unit (GRU)
+
+In summary, recurrent neural networks retain information in memory over time. However, it can be difficult to train standard RNN's to solve problems that require learning long-term dependencies. This is because the gradient of the loss function decreases exponentially with time (vanishing gradient problem). Since the hidden states are overwritten with many time steps, the extensions LSTM and GRU apply an extended concept with separate memory. The weighting functions (the so-called gates) control which information is kept and which may be forgotten. 
+
+In the GRU cell, the two gates $r_t$ and $z_t$ are implemented, as can be seen in figure \ref{fig:GRU_LSTM}. Both are weighting functions that influence whether the cell state $s$ should be updated or the last value is important enough to be kept. The reset gate $r_t$ decides if the previous hidden state $s_{t-1}$ should be ignored. The update gate $z_t$ on the other hand decides if the $\tilde{s_t}$ should be passed to the next hidden state $s_t$ [@GRU_LSTM].
+
+```{r GRU_LSTM, fig.align='center', out.width = "90%", fig.cap= 'Workflow of a GRU cell (left) and LSTM cell (right).', echo=FALSE}
+
+knitr::include_graphics("images/GRU_LSTM.png")
+
+```
+In contrast to the GRU cell, the LSTM cell has additional gates. They are used to control when information enters memory, when it is output, and when it is forgotten. This architecture allows them to learn longer-term dependencies. The input gate $i_t$ takes in new information $x_t$ and the previous hidden state $h_{t-1}$. The forget gate $f_t$ gets the same information as input and controls how much information should be kept up to which value. Information from the previous cell state $c_{t-1}$, the forget gate $f_t$, the input gate $i_t$ and $\tilde{c_t}$ are passed on to the next cell state $c_t$. Finally, the output gate $o_t$ influences the next hidden state $h_t$ as well as the output of the cell [@GRU_LSTM].
+
+The three recurrent neural networks presented are implemented using the R package 'rnn'. 
