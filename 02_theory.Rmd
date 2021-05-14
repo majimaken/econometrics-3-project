@@ -64,7 +64,7 @@ Looking at equation \ref{eq:RNN_many_to_one_2}, $y_{i}$ equals the output and de
 
 \newpage
 
-### 2.3. Long-Short Term Memory (LSTM) and Gated Recurrent Unit (GRU)
+### 2.3. Gated Recurrent Unit (GRU) and Long Short-Term Memory (LSTM)
 
 In summary, recurrent neural networks retain information in memory over time. However, it can be difficult to train standard RNN's to solve problems that require learning long-term dependencies. This is because the gradient of the loss function decreases exponentially with time (vanishing gradient problem). Since the hidden states are overwritten with many time steps, the extensions LSTM and GRU apply an extended concept with separate memory. The weighting functions (the so-called gates) control which information is kept and which may be forgotten. 
 
