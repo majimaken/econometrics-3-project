@@ -75,7 +75,15 @@ rect(xleft=as.numeric(df_sub$date[170]),
 ACFplot(logret, ymax = 0.07, maxlag = 25, main = "Autocorrelation ETH/USD")
 ```
 
+&nbsp;
+
+Figure \ref{fig:limit} visualizes the MSEs for in- and out-of sample of all neuron-layer combinations for all 4 network types. The network architectures are separated by color. On the far left in red, are the networks with only one layer. We have only 10 networks with one layer, which is why this area is very small. In comparison, in the purple part are all networks with a 3-layer architecture.
+
 \newpage
+
+Noticeable in black is the MSE's of the FFN networks. They are very different from the 3 recurrent types. One can see strongly how the network architecture influences the error terms. With increasing complexity, the error in the in-sample decreases but increases in the out-of-sample. This indicates an overfitting of the backpropagation algorithm. It is curious how from a rather small MSE with architecture (10,10) with 2-layers, to the change to the 3-layer architecture with only one neuron each (1,1,1), the MSE makes a jump upwards.
+
+&nbsp;
 
 ```{r meanplot1, fig.align='center', out.width='90%', fig.cap='figurino', echo=FALSE, fig.width = 12, fig.height = 8}
 load("data/mean_ffn.rda")
@@ -162,6 +170,9 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 ```
 
+&nbsp;
+
+It is difficult to determine an optimal architecture based on the MSE. Simply taking the smallest value would not be effective. Small MSE values appear with complex networks, which tend to overfitting. Additionally, the 3 recurrent types are visualized. You can hardly distinguish them from each other in this figure. Nevertheless, you can see how all 3 varies around a fixed value. For a better interpretability only the RNN types are visualized in the following figure \ref{fig:meanplot2}.
 
 \newpage
 
