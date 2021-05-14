@@ -74,14 +74,14 @@ perfnew=merge(mean,cumsum(outtarget),perfall)
 
 ##################################lstm################################################################
 
-
+## LSTM (9, 8, 2)
 
 anz=100
 
   
-nl_comb= 7
+nl_comb= 2 
                                    
-epochs=30                                     
+epochs=  30                                 
 nn_type="lstm"                                      
 learningrate=0.05
 
@@ -128,7 +128,7 @@ anz=100
 nl_comb= 7
 
 epochs=10                                     
-nn_type="rnn"                                      
+nn_type="rnn"      ## RNN (7)                                
 learningrate=0.05
 
 
@@ -170,12 +170,12 @@ save(perfnew_rnn, file="C:/Users/buehl/OneDrive/Dokumente/ZHAW/BSc Wirtschaftsin
 
 
 
-anz=1000
+anz=100
 
+## GRU (8, 9)
+nl_comb= c(8, 9)
 
-nl_comb= 7
-
-epochs=10                                     
+epochs=30                                     
 nn_type="gru"                                      
 learningrate=0.05
 
@@ -211,7 +211,7 @@ perfnew_gru=merge(mean,cumsum(outtarget),perfall)
 
 
 
-save(perfnew_gru, file="C:/Users/buehl/OneDrive/Dokumente/ZHAW/BSc Wirtschaftsingenieur/SEM8/Oeko3/econometrics-3-project/data/perfnew_rnn.rda")
+save(perfnew_gru, file="C:/Users/buehl/OneDrive/Dokumente/ZHAW/BSc Wirtschaftsingenieur/SEM8/Oeko3/econometrics-3-project/data/perfnew_gru.rda")
 
 
 ######################plots #############################################
@@ -277,6 +277,7 @@ name=c("Buy and Hold","feed forward","rnn","lstm","gru")
 colors=c("black","red","blue","orange","green")
 
 plot(cbind(perfnew_rnn[,2],perfnew[,1],perfnew_rnn[,1],perfnew_lstm[,1],perfnew_gru[,1]),main="Performance comparison",col=colors)
+
 addLegend("topleft", 
           legend.names=name,
           col=colors,
