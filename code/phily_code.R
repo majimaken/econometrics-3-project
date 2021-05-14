@@ -75,7 +75,7 @@ fiti <- nn_nl_comb_sharpe_mse(maxneuron=10, maxlayer=3, real=100, data_obj)
 # 10.27h
 # optim_ffn <- fiti
 # save(optim_ffn, file = "data/optim_ffn.rda")
-
+head(data_obj$train_set)
 
 fiti_rnn <- rnn_nl_comb_sharpe_mse(maxneuron=10,
                                    maxlayer=3,
@@ -152,10 +152,10 @@ meaner <- function(dat, real) {
   return(list(mse_in=mse_in, mse_out=mse_out, sharpe_in=sharpe_in, sharpe_out=sharpe_out))
 }
 
-mean_ffn <- meaner(optim_ffn, 100)
-mean_rnn <- meaner(optim_rnn, 10)
-mean_lstm <- meaner(optim_lstm, 10)
-mean_gru <- meaner(optim_gru, 10)
+mean_ffn <- meaner(optim_ffn, 400)
+mean_rnn <- meaner(optim_rnn, 40)
+mean_lstm <- meaner(optim_lstm, 40)
+mean_gru <- meaner(optim_gru, 40)
 
 save(mean_ffn, file="data/mean_ffn.rda")
 save(mean_rnn, file="data/mean_rnn.rda")
@@ -404,9 +404,9 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
 legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, cex=0.8, bty='n',
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 
-
+#.####
+# Best####
 ## FFN (1,4), 6.599511
-# Best
 mean_ffn$sharpe_out[mean_ffn$sharpe_out==max(mean_ffn$sharpe_out)]
 which(names(mean_ffn$sharpe_in) == "1, 4")
 
@@ -417,14 +417,14 @@ mean_ffn$mse_out[14]
 mean(mean_ffn$mse_out)
 
 
-## RNN (7), 6.219602
+## RNN (10, 9), 6.219602
 mean_rnn$sharpe_out[mean_rnn$sharpe_out==max(mean_rnn$sharpe_out)]
-which(names(mean_rnn$sharpe_in) == "7")
+which(names(mean_rnn$sharpe_in) == "10, 9")
 
-mean_rnn$mse_in[7]
+mean_rnn$mse_in[109]
 mean(mean_rnn$mse_in)
 
-mean_rnn$mse_out[7]
+mean_rnn$mse_out[109]
 mean(mean_rnn$mse_out)
 
 
@@ -441,12 +441,210 @@ mean(mean_lstm$mse_out)
 
 
 
-## GRU (8, 9), 5.589237
+## GRU (6, 10), 5.589237
 mean_gru$sharpe_out[mean_gru$sharpe_out==max(mean_gru$sharpe_out)]
-which(names(mean_gru$sharpe_in) == "8, 9")
+which(names(mean_gru$sharpe_in) == "6, 10")
 
-mean_gru$mse_in[89]
+mean_gru$mse_in[70]
 mean(mean_gru$mse_in)
 
-mean_gru$mse_out[89]
+mean_gru$mse_out[70]
 mean(mean_gru$mse_out)
+
+
+
+
+
+
+
+ones <- seq(11, 1110, 10)
+twos <- seq(12, 1110, 10)
+
+
+# Untersuchung der Spikes####
+par_default <- par(no.readonly = TRUE)
+par(mfrow=c(3,1), mar=c(4,5,3,2))
+
+# RNN
+# big_index_rnn <- sort(order(mean_rnn$mse_in, decreasing = TRUE)[1:200])
+# big_index_rnn <- indexerino
+big_index_rnn1 <- ones
+big_value_rnn1 <- mean_rnn$mse_in[big_index_rnn1]
+
+big_index_rnn2 <- twos
+big_value_rnn2 <- mean_rnn$mse_in[big_index_rnn2]
+
+plot(mean_rnn$mse_in, type="l", main="RNN", xaxt="n", ylab="MSE In", xlab="")
+axis(1, at=c(1, 110, 222, 444, 666, 888, 1110),
+     labels=c("(1)", "(10,10)", "(2,2,2)","(4,4,4)", "(6,6,6)", "(8,8,8)", "(10,10,10)"))
+abline(h=mean(mean_rnn$mse_in), lty=3, col="red")
+points(x=big_index_rnn1, y=big_value_rnn1, pch=20, col="red")
+points(x=big_index_rnn2, y=big_value_rnn2, pch=20, col="blue")
+
+# LSTM
+# big_index_lstm <- sort(order(mean_lstm$mse_in, decreasing = TRUE)[1:200])
+# big_index_lstm <- indexerino
+
+big_index_lstm1 <- ones
+big_value_lstm1 <- mean_lstm$mse_in[big_index_lstm1]
+
+big_index_lstm2 <- twos
+big_value_lstm2 <- mean_lstm$mse_in[big_index_lstm2]
+
+plot(mean_lstm$mse_in, type="l", main="LSTM", xaxt="n", ylab="MSE In", xlab="")
+axis(1, at=c(1, 110, 222, 444, 666, 888, 1110),
+     labels=c("(1)", "(10,10)", "(2,2,2)","(4,4,4)", "(6,6,6)", "(8,8,8)", "(10,10,10)"))
+abline(h=mean(mean_lstm$mse_in), lty=3, col="red")
+points(x=big_index_lstm1, y=big_value_lstm1, pch=20, col="red")
+points(x=big_index_lstm2, y=big_value_lstm2, pch=20, col="blue")
+
+
+# GRU
+# big_index_gru <- sort(order(mean_gru$mse_in, decreasing = TRUE)[1:200])
+# big_index_gru <- indexerino
+big_index_gru1 <- ones
+big_value_gru1 <- mean_gru$mse_in[big_index_gru1]
+
+big_index_gru2 <- twos
+big_value_gru2 <- mean_gru$mse_in[big_index_gru2]
+
+plot(mean_gru$mse_in, type="l", main="GRU", xaxt="n", ylab="MSE In", xlab="")
+axis(1, at=c(1, 110, 222, 444, 666, 888, 1110),
+     labels=c("(1)", "(10,10)", "(2,2,2)","(4,4,4)", "(6,6,6)", "(8,8,8)", "(10,10,10)"))
+abline(h=mean(mean_gru$mse_in), lty=3, col="red")
+points(x=big_index_gru1, y=big_value_gru1, pch=20, col="red")
+points(x=big_index_gru2, y=big_value_gru2, pch=20, col="blue")
+par(par_default)
+
+
+
+
+ones <- seq(11, 1110, 10)
+twos <- seq(12, 1110, 10)
+
+big_index_rnn1 <- ones
+big_index_rnn2 <- twos
+
+big_index_lstm1 <- ones
+big_index_lstm2 <- twos
+
+big_index_gru1 <- ones
+big_index_gru2 <- twos
+
+
+
+rnn12 <- mean_rnn$mse_in
+rnn12[big_index_rnn1] <- NA
+rnn12[big_index_rnn2] <- NA
+
+lstm12 <- mean_lstm$mse_in
+lstm12[big_index_lstm1] <- NA
+lstm12[big_index_lstm2] <- NA
+
+gru12 <- mean_gru$mse_in
+gru12[big_index_gru1] <- NA
+gru12[big_index_gru2] <- NA
+
+
+
+par_default <- par(no.readonly = TRUE)
+par(mfrow=c(2,1), mar=c(4,5,3,2))
+
+plot(mean_rnn$mse_in, type="l", col=2, xlab="", ylab="MSE in", main="Original", xaxt="n",
+     frame.plot = FALSE)
+lines(mean_lstm$mse_in, col=3)
+lines(mean_gru$mse_in, col=4)
+axis(1, at=c(1, 110, 222, 444, 666, 888, 1110),
+     labels=c("(1)", "(10,10)", "(2,2,2)","(4,4,4)", "(6,6,6)", "(8,8,8)", "(10,10,10)"))
+rect(xleft=1,
+     xright=10,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#FF00001A")
+
+rect(xleft=11,
+     xright=110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#00FFFF1A")
+
+rect(xleft=111,
+     xright=1110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#8000FF1A")
+
+plot(rnn12, type="l", col=2, xlab="", ylab="MSE in", main="Correction", xaxt="n",
+     frame.plot = FALSE,)
+lines(lstm12, col=3)
+lines(gru12, col=4)
+axis(1, at=c(1, 110, 222, 444, 666, 888, 1110),
+     labels=c("(1)", "(10,10)", "(2,2,2)","(4,4,4)", "(6,6,6)", "(8,8,8)", "(10,10,10)"))
+rect(xleft=1,
+     xright=10,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#FF00001A")
+
+rect(xleft=11,
+     xright=110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#00FFFF1A")
+
+rect(xleft=111,
+     xright=1110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#8000FF1A")
+par(par_default)
+
+
+
+
+
+
+ones <- seq(11, 1110, 10)
+twos <- seq(12, 1110, 10)
+
+indexerino <- sort(c(ones, twos))
+
+?pch
+mean(big_value)
+
+sum(mean_gru$mse_in > mean(mean_gru$mse_in))
+length(mean_gru$mse_in)
+
+plot(mean_gru$mse_in[mean_gru$mse_in < mean(mean_gru$mse_in)], type="l")
+
+mean(mean_gru$mse_in[mean_gru$mse_in < mean(mean_gru$mse_in)])
+
+mean_gru$mse_in[mean_gru$mse_in == max(mean_gru$mse_in)]
+mean_gru$mse_in[531]
+
+big_10_index <- order(mean_gru$mse_in, decreasing = TRUE)[1:10]
+
+big_10_value <- mean_gru$mse_in[order(mean_gru$mse_in, decreasing = TRUE)[1:10]]
+mean_gru$mse_in[order(mean_gru$mse_in, decreasing = TRUE)[1:10]]
+
+points(x=big_10_index, y=big_10_value)
+
+
+load("data/optim_gru.rda")
+mean_gru$mse_in[8]
+mean(as.numeric(optim_gru[531, seq(1, 40, 4)]))
+
+max(as.numeric(apply(X=optim_gru[, seq(1, 40, 4)], MARGIN=1, FUN=mean)))
+
+(as.numeric(optim_gru[8, seq(1, 40, 4)]))
+rownames(optim_gru) == "5, 3, 1"
+
+
+optim_gru[big_10_index, seq(1, 40, 4)]
+
+dim(optim_gru)
+mean_gru$mse_in
+near_mean <- (mean_gru$mse_in < 0.002723464 * 1.001 & mean_gru$mse_in > 0.002723464 * 0.999)
+
+mean_gru$mse_in[near_mean]
+plot(mean_gru$mse_in[near_mean], type="l")
