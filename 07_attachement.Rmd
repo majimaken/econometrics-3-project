@@ -3,7 +3,7 @@ output: pdf_document
 geometry: margin = 1in
 ---
 
-## Attachment {#attachement}
+## 7.1. Attachment {#attachement}
 
 This work is created  with R-4.0.2 , RStudio Version 1.4.904 and RMarkdown in collaborative working via Git / Github
 https://github.com/majimaken/econometrics-3-project
