@@ -16,7 +16,7 @@ header-includes:
 - \usepackage{placeins} # to keep figures and text in the order you wrote them
 
 abstract:
-  "In on announcing if of comparison pianoforte projection. Maids hoped gay yet bed asked blind dried point. On abroad danger likely regret twenty edward do. Too horrible consider followed may differed age. An rest if more five mr of. Age just her rank met down way. Attended required so in cheerful an. Domestic replying she resolved him for did. Rather in lasted no within no." 
+  "The use of neural networks and their utility in financial time series is a frequently studied topic. Plain vanilla feedforward neural networks, recurrent neural networks (RNN), gated recurrent unit (GRU) and long short-term memory (LSTM) are applied and compared. The impact of the choice of a specific network type and network architecture (number of layers and neurons) on trading performance is investigated. Using a fixed in-sample and out-of-sample, all possible combinations between the simplest (one layer and one neuron) and the most complex network (three layers and ten neurons) are trained and their trading performance is quantified. This is done for each of the four network types. Still missing = part about performance plots and main Erkenntnis!!!!!" 
 ---
 
 ```{r, include=FALSE}
