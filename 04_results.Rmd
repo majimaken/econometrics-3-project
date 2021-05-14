@@ -1,3 +1,34 @@
 ## 4. Results {#results}
 
-In on announcing if of comparison pianoforte projection. Maids hoped gay yet bed asked blind dried point. On abroad danger likely regret twenty edward do. Too horrible consider followed may differed age. An rest if more five mr of. Age just her rank met down way. Attended required so in cheerful an. Domestic replying she resolved him for did. Rather in lasted no within no. 
+When all 4 nets are compared against Buy and Hold in figure \ref{fig:performance}. We observe that the feed forward net performs slightly better than buy and hold ,whilst the oter 3 nets are not better or even equal.
+When we look closer the decision of feedforward in (Letter A \ref{fig:performance}) is crucial to the performance. Further the decision in (Letter B \ref{fig:performance}) almost brought the performance back to buy and hold.
+
+From this Behavior it is clear that the benefit in the performance is random. 
+
+
+```{r performance, fig.align='center', out.width='90%', fig.keep='last',fig.cap='Performance all', echo=FALSE, fig.width = 12, fig.height = 8}
+
+#al together
+name=c("Buy and Hold","feed forward","rnn","lstm","gru")
+colors=c("black","red","blue","orange","green")
+events <- xts(LETTERS[1:2], as.Date(c("2021-04-02","2021-04-12")))
+
+plot(cbind(perfnew_rnn[,2],perfnew[,1],perfnew_rnn[,1],perfnew_lstm[,1],perfnew_gru[,1]),main="Performance comparison",col=colors)
+addEventLines(events,srt=90,pos=2,lty=3,col = "orange",lwd=2,)
+
+addLegend("bottomright", 
+          legend.names=name,
+          col=colors,
+          lty=rep(1,1),
+          lwd=rep(2,2),
+          ncol=1,
+          bg="white")
+
+```
+
+
+
+
+
+
+
