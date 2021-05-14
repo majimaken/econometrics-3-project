@@ -1,6 +1,6 @@
 ## 4. Results {#results}
 
-When all 4 nets are compared against Buy and Hold in figure \ref{fig:performance}. We observe that the feed forward net performs slightly better than buy and hold ,whilst the oter 3 nets are not better or even equal.
+When all 4 nets are compared against Buy and Hold in figure \ref{fig:performance}, we observe that the feed forward net performs slightly better than buy and hold ,whilst the other 3 nets are not better or even equal.
 When we look closer the decision of feedforward in (Letter A \ref{fig:performance}) is crucial to the performance. Further the decision in (Letter B \ref{fig:performance}) almost brought the performance back to buy and hold.
 
 From this Behavior it is clear that the benefit in the performance is random. 
