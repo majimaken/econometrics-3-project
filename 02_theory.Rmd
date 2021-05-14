@@ -77,4 +77,4 @@ knitr::include_graphics("images/GRU_LSTM.png")
 ```
 In contrast to the GRU cell, the LSTM cell has additional gates. They are used to control when information enters memory, when it is output, and when it is forgotten. This architecture allows them to learn longer-term dependencies. The input gate $i_t$ takes in new information $x_t$ and the previous hidden state $h_{t-1}$. The forget gate $f_t$ gets the same information as input and controls how much information should be kept up to which value. Information from the previous cell state $c_{t-1}$, the forget gate $f_t$, the input gate $i_t$ and $\tilde{c_t}$ are passed on to the next cell state $c_t$. Finally, the output gate $o_t$ influences the next hidden state $h_t$ as well as the output of the cell [@GRU_LSTM].
 
-The three recurrent neural networks presented are implemented using the R package 'rnn'. 
+The three recurrent neural networks presented are implemented using the R package `rnn`. 
