@@ -1,4 +1,25 @@
 ## 5. Conclusion {#conclusion}
 
-In recapitulation of the results we conclude that RNN GRU and LSTM bring no further Benefit in forecasting of financial timeseries.
+The application of neural networks to financial time series is a well-studied topic. We use and compare feedforward neural networks, recurrent neural networks (RNN), gated recurrent unit (GRU), and long short-term memory (LSTM). The effect of network type and network architecture on trading performance is analyzed. All possible combinations between the simplest (one layer and one neuron) and the most complex network (three layers and ten neurons) are trained 100 times each and their average trading output is evaluated.
 
+When comparing the network architectures, it can be observed that with FFN the overfitting increases as the number of neurons increases. The same phenomenon cannot be observed to the same extent for RNN, GRU and LSTM. Presumably, there is a numerical problem with the optimization algorithm in the three types of RNN. 
+
+Looking at the trading performance, it can be seen that the cumulative returns converge to buy-and-hold in the most optimal case. Although the performance of FFN turnes out better than the three competitors, this is most likely a random event and will be different for other time frames. 
+
+The advantage of recurrent neural networks is that they receive information from the last step. While this can be a great advantage in many applications, there is no benefit from them in our method. Since the lagged log returns are used as input, in principle historical information is also available to the FFN. Furthermore, the usefulness of long-term memory is also very limited, as it is not suitable for detecting effects in noisy data. 
+
+Based on the points mentioned, we see the following opportunities to further develop this Thesis:
+
+- Instead of the R Package 'rnn' used, alternatives could be used, such as 'keras'. This could possibly help to explain why the RNN, GRU, and LSTM optimizations behaved so strangely. 
+
+- The behavior of the neural networks was only considered for a certain time period. These 6+1 months do not represent enough information about an asset class and should be evaluated for more different time periods. 
+
+- Lagged log returns were always used as input in all cases. It could be examined in a further step whether adding more explanatory variables would provide added value. In particular, known indicators of technical analysis, such as s smoothing moving average or the relative strength index (RSI).
+
+
+
+
+
+
+
+In recapitulation of the results we conclude that RNN GRU and LSTM bring no further Benefit in forecasting of financial timeseries.
