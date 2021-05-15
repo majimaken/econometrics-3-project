@@ -1,0 +1,86 @@
+## Attachment
+
+```{r attachment1, fig.align='center', out.width='90%', fig.cap='The upper plot shows the original values. In the lower plot, the values with 1 or 2 neurons in the last layer have been removed.', echo=FALSE, fig.width = 12, fig.height = 8}
+
+ones <- seq(11, 1110, 10)
+twos <- seq(12, 1110, 10)
+
+big_index_rnn1 <- ones
+big_index_rnn2 <- twos
+
+big_index_lstm1 <- ones
+big_index_lstm2 <- twos
+
+big_index_gru1 <- ones
+big_index_gru2 <- twos
+
+
+
+rnn12 <- mean_rnn$mse_in
+rnn12[big_index_rnn1] <- NA
+rnn12[big_index_rnn2] <- NA
+
+lstm12 <- mean_lstm$mse_in
+lstm12[big_index_lstm1] <- NA
+lstm12[big_index_lstm2] <- NA
+
+gru12 <- mean_gru$mse_in
+gru12[big_index_gru1] <- NA
+gru12[big_index_gru2] <- NA
+
+
+
+par_default <- par(no.readonly = TRUE)
+par(mfrow=c(2,1), mar=c(4,5,3,2))
+
+plot(mean_rnn$mse_in, type="l", col=2, xlab="", ylab="MSE in", main="Original", xaxt="n",
+     frame.plot = FALSE)
+lines(mean_lstm$mse_in, col=3)
+lines(mean_gru$mse_in, col=4)
+axis(1, at=c(1, 110, 222, 444, 666, 888, 1110),
+     labels=c("(1)", "(10,10)", "(2,2,2)","(4,4,4)", "(6,6,6)", "(8,8,8)", "(10,10,10)"))
+rect(xleft=1,
+     xright=10,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#FF00001A")
+
+rect(xleft=11,
+     xright=110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#00FFFF1A")
+
+rect(xleft=111,
+     xright=1110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#8000FF1A")
+
+plot(rnn12, type="l", col=2, xlab="", ylab="MSE in", main="Correction", xaxt="n",
+     frame.plot = FALSE,)
+lines(lstm12, col=3)
+lines(gru12, col=4)
+axis(1, at=c(1, 110, 222, 444, 666, 888, 1110),
+     labels=c("(1)", "(10,10)", "(2,2,2)","(4,4,4)", "(6,6,6)", "(8,8,8)", "(10,10,10)"))
+rect(xleft=1,
+     xright=10,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#FF00001A")
+
+rect(xleft=11,
+     xright=110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#00FFFF1A")
+
+rect(xleft=111,
+     xright=1110,
+     ybottom=par('usr')[3],
+     ytop=par('usr')[4],
+     col="#8000FF1A")
+par(par_default)
+
+
+```

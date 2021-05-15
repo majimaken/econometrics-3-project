@@ -82,11 +82,11 @@ Figure \ref{fig:limit} visualizes the MSEs for in- and out-of sample of all neur
 
 \newpage
 
-Noticeable in black is the MSE's of the FFN networks. They are very different from the 3 recurrent types. One can see strongly how the network architecture influences the error terms. With increasing complexity, the error in the in-sample decreases but increases in the out-of-sample. This indicates an overfitting of the backpropagation algorithm. It is curious how from a rather small MSE with architecture (10,10) with 2-layers, to the change to the 3-layer architecture with only one neuron each (1,1,1), the MSE makes a jump upwards.
+Noticeable in black are the MSE's of the FFN networks. They are very different from the 3 recurrent types. One can see strongly how the network architecture influences the error terms. With increasing complexity, the error in the in-sample decreases but increases in the out-of-sample. This indicates an overfitting of the backpropagation algorithm. It is curious how from a rather small MSE with architecture (10,10) with 2-layers, to the change to the 3-layer architecture with only one neuron each (1,1,1), the MSE makes a jump upwards. Despite the extension to 3 layers, the number of neurons is smaller and leads to a more stable solution.
 
  
 
-```{r meanplot1, fig.align='center', out.width='90%', fig.cap='figurino', echo=FALSE, fig.width = 12, fig.height = 8}
+```{r meanplot1, fig.align='center', out.width='90%', fig.cap='In and out-of sample MSE of all neural networks. For FFN, 100 networks were averaged in each case. For the recurrent ones, only 10 were averaged.', echo=FALSE, fig.width = 12, fig.height = 8}
 load("data/mean_ffn.rda")
 load("data/mean_rnn.rda")
 load("data/mean_lstm.rda")
@@ -173,11 +173,19 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
 
  
 
-It is difficult to determine an optimal architecture based on the MSE. Simply taking the smallest value would not be effective. Small MSE values appear with complex networks, which tend to overfitting. Additionally, the 3 recurrent types are visualized. You can hardly distinguish them from each other in this figure. Nevertheless, you can see how all 3 varies around a fixed value. For a better interpretability only the RNN types are visualized in the following figure \ref{fig:meanplot2}.
+It is difficult to determine an optimal architecture based on the MSE. Simply taking the smallest value would not be effective. Small in-sample MSE values appear with complex networks, which tend to overfitting out-of-sample. Additionally, the 3 recurrent types are visualized. You can hardly distinguish them from each other in this figure. Nevertheless, you can see how all 3 varies around a fixed value. For a better interpretability only the RNN types are visualized in the following figure \ref{fig:meanplot2}.
 
 \newpage
 
+<<<<<<< HEAD
 ```{r meanplot2, fig.align='center', out.width='90%', fig.cap='asdasdasd', echo=FALSE, fig.width = 12, fig.height = 8}
+=======
+Here you can see the structure of the recurrent networks a little better. There is no pattern like in the FFN, the MSE's have no inverse correlation between in and out-of sample. There is a certain value that is not undercut. The MSE cannot get better than a certain value. The spikes that occur uniformly are striking. An examination of the results showed that the spikes appear with certain network architectures. If only 1 or 2 neurons were specified in each case in the last layer, then this leads to this strange spike. In the attachment in figure \ref{fig:attachment1}, the neuron-layer combinations with 1 or 2 neurons in the last layer have been removed. There you can see how the spikes have disappeared. Keep in mind, however, that the differences between apparent convergence and a spike are not very large. Furthermore, only 10 networks per combination were trained. This structure could possibly look weakened if one would increase the number of networks.
+
+&nbsp;
+
+```{r meanplot2, fig.align='center', out.width='90%', fig.cap='In and out-of sample MSE of the 3 different recurrent network types.', echo=FALSE, fig.width = 12, fig.height = 8}
+>>>>>>> main
 # MSE-Plots ohne FFN####
 par_default <- par(no.readonly = TRUE)
 par(mfrow=c(2,1), mar=c(4,5,3,2))
@@ -253,9 +261,14 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 ```
 
+<<<<<<< HEAD
+=======
+Nevertheless, we cannot use this visualization to determine an optimal network architecture based on the MSE. Regardless of the complexity, one achieves approximately the same error.
+
+>>>>>>> main
 \newpage
 
-```{r sharpeplot, fig.align='center', out.width='90%', fig.cap='asdasdasd', echo=FALSE, fig.width = 12, fig.height = 8}
+```{r sharpeplot, fig.align='center', out.width='90%', fig.cap='In and out-of sample Sharpe ratios of all neural networks.', echo=FALSE, fig.width = 12, fig.height = 8}
 # Sharpe-Plots####
 perf_in <- as.numeric(data_obj$target_in)
 perf_out <- as.numeric(data_obj$target_out)
@@ -349,8 +362,15 @@ In figure \ref{fig:ffn} the average performance for ffn is visualized in red and
 Notable is for the most nets, the performance is above zero, that might be due to the strong upward trend in the data.
 For an longer out of sample, the distribution of the N nets around the mean, would most likely look more symmetric than it does for only this 30-day out of sample.
 
+<<<<<<< HEAD
 For the GRU LSTM and RNN (plots in [attachement](#attachement)) nets performance seems similar as seen in figure \ref{fig:sharpeplot} converging to buy and hold.
 
+=======
+- FFN (1, 4)
+- RNN (7)
+- LSTM (9, 8, 2)
+- GRU (8, 9)
+>>>>>>> main
 
 
 
