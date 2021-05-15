@@ -1,4 +1,8 @@
-## Attachment
+## 7.1. Attachment {#attachement}
+
+This work is created  with R-4.0.2 , RStudio Version 1.4.904 and RMarkdown in collaborative working via Git / Github
+https://github.com/majimaken/econometrics-3-project
+
 
 ```{r attachment1, fig.align='center', out.width='90%', fig.cap='The upper plot shows the original values. In the lower plot, the values with 1 or 2 neurons in the last layer have been removed.', echo=FALSE, fig.width = 12, fig.height = 8}
 
@@ -83,4 +87,58 @@ rect(xleft=111,
 par(par_default)
 
 
+```
+
+
+```{r LSTM, fig.align='center', out.width='90%', fig.keep="last",fig.cap='GRU out of sample', echo=FALSE, fig.width = 12, fig.height = 8}
+
+
+
+##lstm
+anz=100
+plot(perfnew_lstm,col=c("blue","black",rep("grey",anz)),lwd=c(7,7,rep(1,anz)),main="Out of sample Perfomance LSTM")
+
+name=c("Buy and Hold","Mean of Nets")
+addLegend("topleft", 
+          legend.names=name,
+          col=c("black","blue"),
+          lty=rep(1,1),
+          lwd=rep(2,2),
+          ncol=1,
+          bg="white")
+
+
+
+```
+
+```{r rnn, fig.align='center', out.width='90%', fig.cap='RNN out of sample', echo=FALSE, fig.width = 12, fig.height = 8,fig.keep="last"}
+
+##rnn
+anz=100
+plot(perfnew_rnn,col=c("orange","black",rep("grey",anz)),lwd=c(7,7,rep(1,anz)),main="Out of sample Perfomance rnn")
+
+name=c("Buy and Hold","Mean of Nets")
+addLegend("topleft", 
+          legend.names=name,
+          col=c("black","orange"),
+          lty=rep(1,1),
+          lwd=rep(2,2),
+          ncol=1,
+          bg="white")
+```
+
+```{r gru, fig.align='center', out.width='90%',fig.keep="last", fig.cap='GRU out of sample', echo=FALSE, fig.width = 12, fig.height = 8}
+
+##gru
+anz=100
+plot(perfnew_gru,col=c("green","black",rep("grey",anz)),lwd=c(7,7,rep(1,anz)),main="Out of sample Perfomance GRU")
+
+name=c("Buy and Hold","Mean of Nets")
+addLegend("topleft", 
+          legend.names=name,
+          col=c("black","green"),
+          lty=rep(1,1),
+          lwd=rep(2,2),
+          ncol=1,
+          bg="white")
 ```
