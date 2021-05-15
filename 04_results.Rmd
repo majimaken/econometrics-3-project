@@ -14,7 +14,7 @@ colors=c("black","red","blue","orange","green")
 events <- xts(LETTERS[1:2], as.Date(c("2021-04-02","2021-04-12")))
 
 plot(cbind(perfnew_rnn[,2],perfnew[,1],perfnew_rnn[,1],perfnew_lstm[,1],perfnew_gru[,1]),main="Performance comparison",col=colors)
-addEventLines(events,srt=90,pos=2,lty=3,col = "orange",lwd=2,)
+addEventLines(events,srt=90,pos=2,lty=1,col = "orange",lwd=3,)
 
 addLegend("bottomright", 
           legend.names=name,
