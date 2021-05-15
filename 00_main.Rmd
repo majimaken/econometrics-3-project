@@ -68,8 +68,14 @@ source("add/Functions_RNN.R")
 
 ```{r child= "06_references.Rmd"}
 ```
+<<<<<<< HEAD
+\newpage
+```{r child= "07_attachement.Rmd"}
+```
+=======
 
 \newpage
 
 ```{r child= "07_attachment.Rmd"}
 ```
+>>>>>>> main

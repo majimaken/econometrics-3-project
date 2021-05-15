@@ -125,7 +125,7 @@ save(perfnew_lstm, file="C:/Users/buehl/OneDrive/Dokumente/ZHAW/BSc Wirtschaftsi
 anz=100
 
 
-nl_comb= 7
+nl_comb= c(10,9)
 
 epochs=10                                     
 nn_type="rnn"      ## RNN (7)                                
@@ -173,7 +173,7 @@ save(perfnew_rnn, file="C:/Users/buehl/OneDrive/Dokumente/ZHAW/BSc Wirtschaftsin
 anz=100
 
 ## GRU (8, 9)
-nl_comb= c(8, 9)
+nl_comb= c(6, 10)
 
 epochs=30                                     
 nn_type="gru"                                      
