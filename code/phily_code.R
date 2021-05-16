@@ -68,6 +68,8 @@ ACFplot(logret, ymax = 0.07, maxlag = 25, main = "Autocorrelation ETH/USD")
 
 head(logret)
 data_obj <- data_function(x=logret, lags=10, in_out_sep="2021-04-01", start="2020-10-01", end="2021-04-30")
+data_obj$train_set
+data_obj$target_out
 # save(data_obj, file="data/data_obj.rda")
 c(as.character(time(head(data_obj$target_in, 1))), as.character(time(tail(data_obj$target_in, 1))), as.character(length(data_obj$target_in)))
 c(as.character(time(head(data_obj$target_out, 1))), as.character(time(tail(data_obj$target_out, 1))), as.character(length(data_obj$target_out)))
