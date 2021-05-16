@@ -1,13 +1,13 @@
 ## 4. Results {#results}
 
 When all 4 nets are compared against BnH in figure \ref{fig:performance}, we observe that the feed forward net performs slightly better than BnH, whilst the other 3 nets are not better or even equal.
-When we look closer the decision of feedforward in (Letter A \ref{fig:performance}) is crucial to the performance. 
+When we look closer, the decision of feedforward in (Letter A \ref{fig:performance}) is crucial to the performance. If this return would be predicted negative, the perfomance would be worse than bnH. 
 
 Further the decision in (Letter B \ref{fig:performance}) almost brought the performance back to buy and hold.
 Notice the very short timeframe, to see if that model continuously outperform bnH we ought to test the model on multiple in- and out of samples and cumulate their performance.
 
 
-Thus it can be clearly said that the benefit in the performance in this particular example is most likely generated random.
+Thus, it can be clearly said, that the benefit in the performance in this particular example is most likely generated random.
 
 
 
