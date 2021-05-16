@@ -396,6 +396,22 @@ rect(xleft=111,
      ytop=par('usr')[4],
      col="#8000FF1A")
 
+points(x=which(names(mean_ffn$sharpe_out) == "1, 4"),
+       y=mean_ffn$sharpe_out[mean_ffn$sharpe_out==max(mean_ffn$sharpe_out)],
+       pch=19, col=1)
+
+points(x=which(names(mean_rnn$sharpe_out) == "10, 9"),
+       y=mean_rnn$sharpe_out[mean_rnn$sharpe_out==max(mean_rnn$sharpe_out)],
+       pch=19, col=2)
+
+points(x=which(names(mean_lstm$sharpe_out) == "9, 8, 2"),
+       y=mean_lstm$sharpe_out[mean_lstm$sharpe_out==max(mean_lstm$sharpe_out)],
+       pch=19, col=3)
+
+points(x=which(names(mean_gru$sharpe_in) == "6, 10"),
+       y=mean_gru$sharpe_out[mean_gru$sharpe_out==max(mean_gru$sharpe_out)],
+       pch=19, col=4)
+
 par(par_default)
 legend("right", legend = c("FFN", "RNN", "LSTM", "GRU", "BnH-Sharpe"), lty=c(1,1,1,1,3), pt.cex=2, cex=0.8, bty='n',
        col = c(1,2,3,4,8), horiz=TRUE)
@@ -408,7 +424,7 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
 # Best####
 ## FFN (1,4), 6.599511
 mean_ffn$sharpe_out[mean_ffn$sharpe_out==max(mean_ffn$sharpe_out)]
-which(names(mean_ffn$sharpe_in) == "1, 4")
+which(names(mean_ffn$sharpe_out) == "1, 4")
 
 mean_ffn$mse_in[14]
 mean(mean_ffn$mse_in)

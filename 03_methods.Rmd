@@ -44,11 +44,9 @@ Optimization of the ETH log return with the `auto.arima` function from the packa
 
 ### 3.1. Neural Network Architecture
 
-We would like to trade ETH/USD, which is why a trustworthy forecast is desired. Now there are countless ways how to modify neural networks and get different solutions at best. In order to reduce the scope, we limit ourselves to a 6-month in-sample and a 1-month out-of-sample split. First, this shortens the computational work and we can compare different methods and architectures using the same time period. In addition, the split is proposed in [@nnfin]. The split can be seen in figure \ref{fig:limit}, where red is the in-sample and blue is the out-of-sample. The autocorrelation function of the datasubset shows dependence at lag 5 and 10, which is why we go to a maximum of lag 10 for the input layer.
+The aim is to trade ETH/USD, which is why a trustworthy forecast is desired. There are countless ways how to modify neural networks and get different solutions at best. In order to reduce the scope, we limit ourselves to a 6-month in-sample and a 1-month out-of-sample split, as G. Sermpinis and A. Karathanasopoulos proposed [@nnfin]. This shortens the computational work and we can compare different methods and architectures using the same time period. The split can be seen in figure \ref{fig:limit}, where red is the in-sample and blue represents the out-of-sample. The autocorrelation function of the data subset shows dependence at lag 5 and 10, which is why we go to a maximum of lag 10 for the input layer.
 
-In addition, we limit ourselves in terms of network architecture. On the one hand, the added value for too large networks is somewhat moderate for time series (source) and on the other hand, this would go beyond the scope of this work. For each network type presented in section [2](#theory), network architectures from 1 layer with 1 neuron to 3 layers with 10 neurons each are trained. We thus examine a total of 1100 different neuron layer combinations, with (1) the simplest and (10,10,10) the most complex network. To make a comparison possible, the respective in/out-of sample MSEs and Sharpe ratios are calculated for each network. To mitigate the problem of optimizing the backpropagation algorithm, 100 nets are trained and averaged for each architecture for the feedforward networks (FFN). For the recurrent network types (RNN, LSTM, GRU) only 10 networks per architecture are trained but with 10 epochs each.
-
-
+In addition, we limit ourselves in terms of network architecture. On the one hand, the added value for too large networks is somewhat moderate for time series (source) and on the other hand, this would go beyond the scope of this work. For each network type presented in section [2](#theory), network architectures from 1 layer with 1 neuron to 3 layers with 10 neurons each are trained. We thus examine a total of 1100 different neuron layer combinations, with (1) the simplest and (10,10,10) the most complex network. To make a comparison possible, the respective in/out-of sample MSE's and Sharpe ratios are calculated for each network. To mitigate the problem of optimizing the backpropagation algorithm, 100 nets are trained and averaged for each architecture for the feedforward networks (FFN). For the recurrent network types (RNN, LSTM, GRU) only 10 networks per architecture are trained but with 10 epochs each.
 
 ```{r limit, fig.align='center', out.width='90%', fig.cap='Subset of 7 months. Log returns on the left, acf on the right.', echo=FALSE, fig.width = 8, fig.height = 4.5}
 subi <- logret["2020-10-01::2021-04-30"]
@@ -76,15 +74,11 @@ rect(xleft=as.numeric(df_sub$date[170]),
 ACFplot(logret, ymax = 0.07, maxlag = 25, main = "Autocorrelation ETH/USD")
 ```
 
-
-
-Figure \ref{fig:limit} visualizes the MSEs for in- and out-of sample of all neuron-layer combinations for all 4 network types. The network architectures are separated by color. On the far left in red, are the networks with only one layer. We have only 10 networks with one layer, which is why this area is very small. In comparison, in the purple part are all networks with a 3-layer architecture.
+Figure \ref{fig:limit} visualizes the MSE's for in- and out-of sample of all neuron-layer combinations for all 4 network types. The network architectures are separated by color. On the far left in red, are the networks with only one layer. We have only 10 networks with one layer, which is why this area is very small. In comparison, in the purple part are all networks with a 3-layer architecture.
 
 \newpage
 
-Noticeable in black are the MSE's of the FFN networks. They are very different from the 3 recurrent types. One can see strongly how the network architecture influences the error terms. With increasing complexity, the error in the in-sample decreases but increases in the out-of-sample. This indicates an overfitting of the backpropagation algorithm. It is curious how from a rather small MSE with architecture (10,10) with 2-layers, to the change to the 3-layer architecture with only one neuron each (1,1,1), the MSE makes a jump upwards. Despite the extension to 3 layers, the number of neurons is smaller and leads to a more stable solution.
-
-
+Noticeable in black are the MSE's of the FFN. They are very different from the 3 recurrent types. We can see strongly how the network architecture influences the error terms. With increasing complexity, the error in the in-sample decreases but increases in the out-of-sample. This indicates an overfitting of the backpropagation algorithm. It is remarkable that the in-sample MSE with the architecture (10,10) results in a much smaller error than a very simple model with three layers such as (1,1,1). The out-of-sample MSE improves drastically by using an architecture of (1,1,1). In this case, the addition of another layer adds value despite the small number of neurons.
 
 ```{r meanplot1, fig.align='center', out.width='90%', fig.cap='In and out-of sample MSE of all neural networks. For FFN, 100 networks were averaged in each case. For the recurrent ones, only 10 were averaged.', echo=FALSE, fig.width = 12, fig.height = 8}
 load("data/mean_ffn.rda")
@@ -173,13 +167,13 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
 
 
 
-It is difficult to determine an optimal architecture based on the MSE. Simply taking the smallest value would not be effective. Small in-sample MSE values appear with complex networks, which tend to overfitting out-of-sample. Additionally, the 3 recurrent types are visualized. You can hardly distinguish them from each other in this figure. Nevertheless, you can see how all 3 varies around a fixed value. For a better interpretability only the RNN types are visualized in the following figure \ref{fig:meanplot2}.
+It is difficult to determine an optimal architecture based on the MSE. Simply taking the smallest value would not be effective. Small in-sample MSE values appear with complex networks, which tend to overfitting out-of-sample. Additionally, the 3 recurrent types are visualized. You can hardly distinguish them from each other since their behavior is rather similar. Nevertheless, you can see how all 3 varies around a fixed value. For a better interpretability only the RNN types are visualized in the following figure \ref{fig:meanplot2}.
 
 \newpage
 
 
 
-Here you can see the structure of the recurrent networks a little better. There is no pattern like in the FFN, the MSE's have no inverse correlation between in and out-of sample. There is a certain value that is not undercut. The MSE cannot get better than a certain value. The spikes that occur uniformly are striking. An examination of the results showed that the spikes appear with certain network architectures. If only 1 or 2 neurons were specified in each case in the last layer, then this leads to this strange spike. In the attachment in figure \ref{fig:attachment1}, the neuron-layer combinations with 1 or 2 neurons in the last layer have been removed. There you can see how the spikes have disappeared. Keep in mind, however, that the differences between apparent convergence and a spike are not very large. Furthermore, only 10 networks per combination were trained. This structure could possibly look weakened if one would increase the number of networks.
+Here you can see the structure of the recurrent networks a little better. There is no pattern like in the FFN, the MSE's have no inverse correlation between in- and out-of sample. There is a certain value that is not undercut. The MSE cannot get better than a certain value. The spikes that occur uniformly are striking. An examination of the results showed that the spikes appear with certain network architectures. If only 1 or 2 neurons were specified in each case in the last layer, then this leads to this strange spike. In the attachment in figure \ref{fig:attachment1}, the neuron-layer combinations with 1 or 2 neurons in the last layer have been removed. There you can see how the spikes have disappeared. Keep in mind, however, that the differences between apparent convergence and a spike are not very large. Furthermore, only 10 networks per combination were trained. This structure could possibly look weakened if one would increase the number of networks.
 
 &nbsp;
 
@@ -266,6 +260,10 @@ Nevertheless, we cannot use this visualization to determine an optimal network a
 
 \newpage
 
+Here in figure \ref{fig:sharpeplot}, the Sharpe ratios are visualized. In the case of recurrent networks, one can again see this strange repeating pattern, which can be corrected by a possible removal of some network architectures (see above). The dotted line shows the buy-and-hold (BnH) Sharpe. The trading signals generated by the recurrent networks (daily signum-trading) seem to be on only as good as BnH. Looking closely there are a few that are a little better.
+
+As for the MSE's, the structure looks very similar for the Sharpe Ratios for the FFN. The rather small in-sample MSE's in figure \ref{fig:meanplot1} of the FFN, lead here to high in-sample Sharpe ratios but to rather low out-of-sample Sharpe ratios. This can also be explained by a too complex network, which leads to overfitting. Nevertheless, there are some architectures that lead to better out-of-sample Sharpe's than Bnh and are not in the realm of overfitting. The most optimal out-of-sample Sharpe for FFN can be found here with 2 layers, 1 neuron in the first and 4 neurons in the second layer (black dot).
+
 ```{r sharpeplot, fig.align='center', out.width='90%', fig.cap='In and out-of sample Sharpe ratios of all neural networks.', echo=FALSE, fig.width = 12, fig.height = 8}
 # Sharpe-Plots####
 perf_in <- as.numeric(data_obj$target_in)
@@ -339,6 +337,22 @@ rect(xleft=111,
      ytop=par('usr')[4],
      col="#8000FF1A")
 
+points(x=which(names(mean_ffn$sharpe_out) == "1, 4"),
+       y=mean_ffn$sharpe_out[mean_ffn$sharpe_out==max(mean_ffn$sharpe_out)],
+       pch=19, col=1)
+
+points(x=which(names(mean_rnn$sharpe_out) == "10, 9"),
+       y=mean_rnn$sharpe_out[mean_rnn$sharpe_out==max(mean_rnn$sharpe_out)],
+       pch=19, col=2)
+
+points(x=which(names(mean_lstm$sharpe_out) == "9, 8, 2"),
+       y=mean_lstm$sharpe_out[mean_lstm$sharpe_out==max(mean_lstm$sharpe_out)],
+       pch=19, col=3)
+
+points(x=which(names(mean_gru$sharpe_in) == "6, 10"),
+       y=mean_gru$sharpe_out[mean_gru$sharpe_out==max(mean_gru$sharpe_out)],
+       pch=19, col=4)
+
 par(par_default)
 legend("right", legend = c("FFN", "RNN", "LSTM", "GRU", "BnH-Sharpe"), lty=c(1,1,1,1,3), pt.cex=2, cex=0.8, bty='n',
        col = c(1,2,3,4,8), horiz=TRUE)
@@ -348,17 +362,21 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 ```
 
+For the recurrent network types, it is not so easy to find an optimal network. Regardless of the network architecture, they all perform equally well as BnH. This whole investigation gave us an added value for FFN but not for the recurrent types. We found strange structures for certain network architectures (1 or 2 neurons in the last layer) but cannot determine a clear network architecture. For further procedure, we determine the highest out-of-sample Sharpe ratios as the optimal network (indicated with the colored dots in each case). Keep in mind, however, that the optimization is only for a number of 10 networks. With a larger number, individual well-performing networks would not stand out as much.
+
 
 \newpage
 
+### 3.2. Trading Performance
+
 The architecture which we previously defined, are now used to compare against each other. Due to the random component in all the nets we chose a minimum of 100 nets to find an appropriate average.
 
-This procedure is done for ffn, gru, lstm and also rnn. The results for each net can be found in the [attachement](#attachement).
+This procedure is done for FNN, GRU, LSTM and also RNN. The results for each net can be found in the [attachement](#attachement).
 
 
-In figure \ref{fig:ffn} the average performance for ffn is visualized in red and the benchmark "buy and hold" is in black.
+In figure \ref{fig:ffn} the average performance for FFN is visualized in red and the benchmark "buy-and-hold" is in black.
 Notable is for the most nets, the performance is above zero, that might be due to the strong upward trend in the data.
-For an longer out of sample, the distribution of the N nets around the mean, would most likely look more symmetric than it does for only this 30-day out of sample.
+For a longer out of sample, the distribution of the N nets around the mean, would most likely look more symmetric than it does for only this 30-day out of sample.
 
 
 For the GRU LSTM and RNN (plots in [attachement](#attachement)) nets performance seems similar as seen in figure \ref{fig:sharpeplot} converging to buy and hold.
@@ -367,11 +385,6 @@ For the GRU LSTM and RNN (plots in [attachement](#attachement)) nets performance
 - RNN (7)
 - LSTM (9, 8, 2)
 - GRU (8, 9)
-
-
-
-
-
 
 
 ```{r}
