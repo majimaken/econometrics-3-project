@@ -1,12 +1,18 @@
 ## 4. Results {#results}
 
 When all 4 nets are compared against BnH in figure \ref{fig:performance}, we observe that the feed forward net performs slightly better than BnH, whilst the other 3 nets are not better or even equal.
-When we look closer the decision of feedforward in (Letter A \ref{fig:performance}) is crucial to the performance. Further the decision in (Letter B \ref{fig:performance}) almost brought the performance back to buy and hold.
+When we look closer the decision of feedforward in (Letter A \ref{fig:performance}) is crucial to the performance. 
 
-From this Behavior it is clear that the benefit in the performance is random.
+Further the decision in (Letter B \ref{fig:performance}) almost brought the performance back to buy and hold.
+Notice the very short timeframe, to see if that model continuously outperform bnH we ought to test the model on multiple in- and out of samples and cumulate their performance.
 
 
-```{r performance, fig.align='center', out.width='90%', fig.keep='last',fig.cap='Performance all', echo=FALSE, fig.width = 12, fig.height = 8}
+Thus it can be clearly said that the benefit in the performance in this particular example is most likely generated random.
+
+
+
+
+```{r performance, fig.align='center', out.width='100%', fig.keep='last',fig.cap='Performance all', echo=FALSE, fig.width = 12, fig.height = 8}
 
 #al together
 name=c("Buy and Hold","feed forward","rnn","lstm","gru")

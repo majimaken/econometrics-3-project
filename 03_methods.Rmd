@@ -369,22 +369,25 @@ For the recurrent network types, it is not so easy to find an optimal network. R
 
 ### 3.2. Trading Performance
 
-The architecture which we previously defined, are now used to compare against each other. Due to the random component in all the nets we chose a minimum of 100 nets to find an appropriate average.
+From the previous procedure we picked the architecture which returned the highest out-of-sample sharpe ,for each method.
 
-This procedure is done for FNN, GRU, LSTM and also RNN. The results for each net can be found in the [attachement](#attachement).
+- FFN (1, 4)
 
+- RNN (7) 30 epochs
+- LSTM (10,9) 30 epochs
+- GRU (6, 10) 30 epochs
+
+
+These architectures are now used to train and test a model on the data from Figure \ref{fig:limit}. Due to the random component in all the nets we computed each 100 nets (for ffn 10000) and calculated the arithmetic mean for every timestep.
 
 In figure \ref{fig:ffn} the average performance for FFN is visualized in red and the benchmark "buy-and-hold" is in black.
 Notable is for the most nets, the performance is above zero, that might be due to the strong upward trend in the data.
 For a longer out of sample, the distribution of the N nets around the mean, would most likely look more symmetric than it does for only this 30-day out of sample.
 
+This procedure is done for FNN, GRU, LSTM and also RNN. The results for each net can be found in the [attachement](#attachement).
+
 
 For the GRU LSTM and RNN (plots in [attachement](#attachement)) nets performance seems similar as seen in figure \ref{fig:sharpeplot} converging to buy and hold.
-
-- FFN (1, 4)
-- RNN (7)
-- LSTM (9, 8, 2)
-- GRU (8, 9)
 
 
 ```{r}
