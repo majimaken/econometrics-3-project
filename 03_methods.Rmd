@@ -400,7 +400,7 @@ addLegend("top",
 
 ```
 
-In figure \ref{fig:ffn}, the performances of all optimized FFN are plotted. The red line represents the average of all optimized FFN, which performs better than the buy-and-hold in black. In addition, it is worth noting that all realizations of the FFN have a performance better than zero. This is most likely due to the upward trend of the ETH. 
+In figure \ref{fig:ffn}, the performances of all optimized FFN are plotted. The red line represents the average of all optimized FFN, which performs better than the buy-and-hold in black. In addition, it is worth noting that most realizations of the FFN have a performance better than zero. This is most likely due to the upward trend of the ETH. 
 For a longer out-of-sample, the distribution of all the optimized FFN would most likely look more symmetric and scatter more evenly around the average than it does for only this 30-day out of sample. This procedure is repeated for FNN, GRU, LSTM and RNN. The results for each network type can be found in the [attachement](#attachement). For the GRU, LSTM and RNN nets performance seems similar as seen in figure \ref{fig:sharpeplot}, converging to buy-and-hold.
 
 
