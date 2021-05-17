@@ -1,10 +1,10 @@
 ## 3. Methods {#methods}
 
-This section covers how to define a trading strategy from the trained networks. It is also dedicated to the topic of how performance is evaluated.
+This section covers how to define a trading strategy from the trained networks. It is also dedicated to the topic of how performance is evaluated. The application is tested and evaluated using the time series of the Ether price (ETH). Ether is the cryptocurrency of the blockchain technology Ethereum. 
 
-### 3.1. Data exploration
+### 3.1. Data Exploration
 
-First, we will explore the development of ETH over time. Figure \ref{fig:eth_exploration} shows the price, the logarithmic price and the log return. The logarithmic price is used to better compare the changes from the price as the relative change becomes visible. The same is true for the log return which shows stationarity. In the first two plots, the local peaks are well visible, which reached a then ATH (All-Time High) of USD 1313 in January 2018. It can also be seen that we are in a bull run at the time of writing this paper. In the log return, it can be seen that the volatility is not constant and thus shows volatility clusters.
+First, we will explore the development of ETH over time. Figure \ref{fig:eth_exploration} shows the price, the logarithmic price and the log return. The logarithmic price is used to better compare the changes from the price as the relative change becomes visible. The same is true for the log return which shows stationarity. In the first two plots, the local peaks are well visible, which reached a then ATH (all-time high) of USD 1313 in January 2018. It can also be seen that we are in a bull run at the time of writing this paper. In the log return, it can be seen that the volatility is not constant and thus shows volatility clusters.
 
 ```{r eth_exploration, fig.align='center', out.width='90%', fig.cap='Time plot of the price, logarithmized price and log return based on the price for ETH/USD. Large (crypto) market phase dependencies and volatility persistence are evident.', echo=FALSE, fig.width = 8, fig.height = 6.5}
 # knitr::include_graphics("images/eth_exploration.png")
@@ -352,14 +352,20 @@ legend("left", legend=c("1 Layer", '2 Layers', '3 Layers'), pch=15, pt.cex=2, ce
        col = c('#FF00001A', '#00FFFF1A', '#8000FF1A'), horiz=TRUE)
 ```
 
-For the recurrent network types, it is not so easy to find an optimal network. Regardless of the network architecture, they all perform equally well as BnH. This whole investigation gave us an added value for FFN but not for the recurrent types. We found strange structures for certain network architectures (1 or 2 neurons in the last layer) but cannot determine a clear network architecture. For further procedure, we determine the highest out-of-sample Sharpe ratios as the optimal network (indicated with the colored dots in each case). Keep in mind, however, that the optimization is only for a number of 10 networks. With a larger number, individual well-performing networks would not stand out as much.
+For the recurrent network types, it is not so easy to find an optimal network. Regardless of the network architecture, they all perform equally well as BnH. This whole investigation gives us an added value for FFN but not for the recurrent types. We find strange structures for certain network architectures (1 or 2 neurons in the last layer) but cannot determine a clear network architecture. For further procedure, we determine the highest out-of-sample Sharpe ratios as the optimal network (indicated with the colored dots in each case). Keep in mind, however, that the optimization is only for a number of 10 networks. With a larger number, individual well-performing networks would not stand out as much.
 
 
 \newpage
 
+### 3.1. Trading Strategy
+
+The trading strategy is based on the predicted log returns for $t+1$. If the neural network used predicts a positive return, we stay in the market (signal = 1). If the forecast is negative, we enter a short position (signal = -1). 
+
+For this trading strategy we ignore the potential transaction costs. It is also assumed that long and short positions in ETH are possible. 
+
 ### 3.2. Trading Performance
 
-From the previous procedure, we picked the architecture which returned the highest out-of-sample Sharpe, for each method.
+Resulting from the previous procedure, we pick the network architecture with the highest out-of-sample Sharpe and repeat this for every network type. The following models are selected for further analysis:
 
 - FFN (1, 4)
 - RNN (7) 30 epochs
@@ -367,16 +373,7 @@ From the previous procedure, we picked the architecture which returned the highe
 - GRU (6, 10) 30 epochs
 
 
-These architectures are now used to train and test a model on the data from figure \ref{fig:limit}. Due to the random component in all the nets, we computed 100 nets each (10000 for FFN) and averaged for every timestep.
-
-In figure \ref{fig:ffn} the average performance for FFN is visualized in red and the benchmark "buy-and-hold" is in black.
-Notable is for the most nets, the performance is above zero, which might be due to the strong upward trend in the data.
-For a longer out of sample, the distribution of the N nets around the mean would most likely look more symmetric than it does for only this 30-day out of sample.
-
-This procedure is done for FNN, GRU, LSTM and also RNN. The results for each net can be found in the [attachement](#attachement).
-
-For the GRU LSTM and RNN (plots in [attachement](#attachement)) nets performance seems similar as seen in figure \ref{fig:sharpeplot}, converging to buy and hold.
-
+These architectures are used to train and test a model on the data from figure \ref{fig:limit}. Due to the random component in all the neural networks, we compute 100 networks each (10000 for FFN) and calculate the average for every time step.
 
 ```{r}
 load("data/perfnew_ff.rda")
@@ -403,7 +400,8 @@ addLegend("top",
 
 ```
 
-
+In figure \ref{fig:ffn}, the performances of all optimized FFN are plotted. The red line represents the average of all optimized FFN, which performs better than the buy-and-hold in black. In addition, it is worth noting that all realizations of the FFN have a performance better than zero. This is most likely due to the upward trend of the ETH. 
+For a longer out-of-sample, the distribution of all the optimized FFN would most likely look more symmetric and scatter more evenly around the average than it does for only this 30-day out of sample. This procedure is repeated for FNN, GRU, LSTM and RNN. The results for each network type can be found in the [attachement](#attachement). For the GRU, LSTM and RNN nets performance seems similar as seen in figure \ref{fig:sharpeplot}, converging to buy-and-hold.
 
 
 

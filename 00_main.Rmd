@@ -16,7 +16,7 @@ header-includes:
 - \usepackage{placeins} # to keep figures and text in the order you wrote them
 
 abstract:
-  "The use of neural networks and their utility in financial time series is a frequently studied topic. Plain vanilla feedforward neural networks, recurrent neural networks (RNN), gated recurrent unit (GRU), and long short-term memory (LSTM) are applied and compared. The impact of the choice of a specific network type and network architecture (number of layers and neurons) on trading performance is investigated. Using a fixed in-sample and out-of-sample, all possible combinations between the simplest (one layer and one neuron) and the most complex network (three layers and ten neurons) are trained and their trading performance is quantified and compared to the Buy and Hold Benchmark. The results of the recurrent networks are disappointing regarding financial time series, however, feed forward nets are worth pursuing and further investigating."
+  "The use of neural networks and their utility in financial time series is a frequently studied topic. Plain vanilla feedforward neural networks (FFN), recurrent neural networks (RNN), gated recurrent unit (GRU), and long short-term memory (LSTM) are applied and compared. The impact of the choice of a specific network type and network architecture (number of layers and neurons) on trading performance is investigated. Using a fixed in-sample and out-of-sample, all possible combinations between the simplest (one layer and one neuron) and the most complex network (three layers and ten neurons) are trained and their trading performance is quantified and compared to the buy-and-hold benchmark. The results of the recurrent networks are disappointing regarding financial time series, however, FFN's are worth pursuing and further investigating."
 ---
 
 ```{r, include=FALSE}
@@ -53,8 +53,6 @@ source("add/Functions_RNN.R")
 
 ```{r child= "03_methods.Rmd"}
 ```
-
-\newpage
 
 ```{r child= "04_results.Rmd"}
 ```
