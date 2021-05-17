@@ -1,21 +1,11 @@
 ## 4. Results {#results}
 
-When all 4 nets are compared against BnH in figure \ref{fig:performance}, we observe that the FFN performs slightly better than BnH, whilst the other 3 nets are not better or even equal.
-When we look closer, the decision of feedforward in (Letter A \ref{fig:performance}) is crucial to the performance. If this return would be predicted negative, the performance would be worse than BnH. 
+The performances of all four models are compared with a buy-and-hold strategy, which can be seen in figure \ref{fig:performance}. We observe that the FFN performs slightly better than our benchmark, while the other three clearly do not meet the benchmark. Looking more closely, it can be seen that one single decision (letter A in figure \ref{fig:performance}) of the FFN leads to the overperformance. If this event did not occur, the performance would also be worse than the benchmark. Further, a second decision (letter B in figure \ref{fig:performance}) worsens the performance and brings it back to a level similar to buy-and-hold. These two events appear to have occurred coincidentally. To test whether FFN systematically beats the buy-and-hold, it would be necessary to extend the time window and test different in- and out-of-samples and compare their performance. These findings strongly suggest that the individual decisions, and thus the performance of the examined neural networks, is determined by chance. 
 
-Further, the decision in (Letter B \ref{fig:performance}) almost brought the performance back to buy and hold.
-Notice the very short timeframe, to see if that model continuously outperforms BnH we ought to test the model on multiple in- and out-of-samples and cumulate their performance.
-
-
-Thus, it can be clearly said, that the benefit in the performance in this particular example is most likely generated randomly.
-
-
-
-
-```{r performance, fig.align='center', out.width='100%', fig.keep='last',fig.cap='Performance all', echo=FALSE, fig.width = 12, fig.height = 8}
+```{r performance, fig.align='center', out.width='90%', fig.keep='last',fig.cap='Performance all', echo=FALSE, fig.width = 12, fig.height = 8}
 
 #al together
-name=c("Buy and Hold","feed forward","rnn","lstm","gru")
+name=c("Buy-and-hold","FNN","RNN","LSTM","GRU")
 colors=c("black","red","blue","orange","green")
 events <- xts(LETTERS[1:2], as.Date(c("2021-04-02","2021-04-12")))
 

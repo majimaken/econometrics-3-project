@@ -1,10 +1,10 @@
 ## 5. Conclusion {#conclusion}
 
-### Summary
+### 5.1. Summary
 
 The application of neural networks to financial time series is a newer topic. We used and compared feedforward neural networks (FFN), recurrent neural networks (RNN), gated recurrent unit (GRU), and long short-term memory (LSTM). The effect of network type and network architecture on trading performance was analyzed. All possible combinations between the simplest (one layer and one neuron) and the most complex network (three layers and ten neurons) were trained 100 times each and their average trading output was evaluated.
 
-### Conclusion
+### 5.2. Conclusion and Outlook
 
 When comparing the network architectures, it can be observed that with FFN the overfitting increases as the number of neurons increase. The same phenomenon cannot be observed to the same extent for RNN, GRU and LSTM. Presumably, there is a numerical problem with the optimization algorithm in the three types of RNN. 
 
@@ -22,4 +22,4 @@ Based on the points mentioned, we see the following opportunities to further dev
 
 
 
-In recapitulation of the results, we conclude that RNN GRU and LSTM bring no further Benefit in the forecasting of financial timeseries, but feed forward nets could be interesting to examine.
+In recapitulation of the results, we conclude that the recurrent forms RNN, GRU and LSTM bring no further benefit in forecasting of financial time series. In particular, this is the case since FFN is also fed with historical log returns. On this basis, we believe that the potential of FFN could be further explored with the aforementioned suggestions. 
